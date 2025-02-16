@@ -12,7 +12,7 @@ jobs:
       - name: Checkout do repositório do Paulo
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Pega o histórico completo, para poder ver os autores dos commits anteriores
 
       - name: Clonar repositório de destino (MrBElga/ComputerGraphics)
         run: |
@@ -21,10 +21,13 @@ jobs:
           git config user.name "MrBElga"
           git config user.email "danieleliasrumin@gmail.com"
 
+
       - name: Copiar mudanças para o repositório de destino
         run: |
+          # Pega o último commit do repositório de origem e armazena o autor
+          LAST_COMMIT_AUTHOR=$(git log -1 --pretty=format:'%an <%ae>')
           rsync -av --exclude='.git' . target-repo/
           cd target-repo
           git add .
-          git commit -m "Sync automático do repo do Paulo" || echo "Nenhuma mudança para commitar"
+          git commit --author="$LAST_COMMIT_AUTHOR" -m "Sync automático do repo do Paulo" || echo "Nenhuma mudança para commitar"
           git push https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/MrBElga/ComputerGraphics.git main
