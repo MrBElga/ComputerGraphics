@@ -145,5 +145,43 @@ namespace ProcessamentoImagens
             imageBitmap.UnlockBits(bitmapData);
             return hsi;
         }
+
+        public static void SetBrightness(Bitmap imageBitmap, Bitmap imgDest, int porc)
+        {
+            if (imageBitmap == null || imgDest == null)
+                throw new ArgumentNullException("Bitmaps não podem ser nulos.");
+
+            int width = imageBitmap.Width;
+            int height = imageBitmap.Height;
+
+            Rectangle rect = new Rectangle(0, 0, width, height);
+            BitmapData srcData = imageBitmap.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+            BitmapData destData = imgDest.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format24bppRgb);
+
+            int bytesPerPixel = 3;
+            int stride = srcData.Stride;
+            IntPtr srcPtr = srcData.Scan0;
+            IntPtr destPtr = destData.Scan0;
+
+            unsafe
+            {
+                byte* src = (byte*)srcPtr;
+                byte* dest = (byte*)destPtr;
+
+                for (int y = 0; y < height; y++)
+                {
+                    for (int x = 0; x < width * bytesPerPixel; x++)
+                    {
+                        int pixelValue = src[x] + (src[x] * porc / 100);
+                        dest[x] = (byte)Math.Max(0, Math.Min(255, pixelValue));
+                    }
+                    src += stride;
+                    dest += stride;
+                }
+            }
+
+            imageBitmap.UnlockBits(srcData);
+            imgDest.UnlockBits(destData);
+        }
     }
 }

@@ -40,7 +40,8 @@ namespace ProcessamentoImagens
             int height = image.Height;
             int width = image.Width;
             HSI[,] hsi = new HSI[width, height];
-            for (int y = 0; y < height; y++) {
+            for (int y = 0; y < height; y++)
+            {
                 for (int x = 0; x < width; x++)
                 {
                     int r = imageBitmap.GetPixel(x, y).R;
@@ -52,14 +53,14 @@ namespace ProcessamentoImagens
                     float Bnormalizado = (float)b / (r + g + b);
 
                     float h = (float)Math.Acos((0.5 * ((r - g) + (r - b))) / Math.Sqrt((r - g) * (r - g) + (r - b) * (g - b)));
-                    if(b>g)
+                    if (b > g)
                     {
                         h = (float)(2 * Math.PI - h);
                     }
 
                     float s = 1 - 3 * Math.Min(Math.Min(Rnormalizado, Gnormalizado), Bnormalizado);
 
-                    float i = (float)(r + g + b) / (3*255);
+                    float i = (float)(r + g + b) / (3 * 255);
 
                     int H = (int)(h * 180 / Math.PI);
                     int S = (int)(s * 100);
@@ -92,7 +93,7 @@ namespace ProcessamentoImagens
             unsafe
             {
                 // inicio da imagem 
-                byte* src = (byte*)bitmapData.Scan0.ToPointer(); 
+                byte* src = (byte*)bitmapData.Scan0.ToPointer();
 
                 for (int y = 0; y < height; y++)
                 {
@@ -189,12 +190,12 @@ namespace ProcessamentoImagens
         }
         private void btnAjustarBrilho_Click(object sender, EventArgs e)
         {
-                //implementar 
+            //implementar 
         }
 
         private void btnAjustarHue_Click(object sender, EventArgs e)
         {
-                //implementar 
+            //implementar 
         }
 
         private void frmPrincipal_Load(object sender, EventArgs e)
@@ -225,6 +226,15 @@ namespace ProcessamentoImagens
                 tbCMY.Text = string.Empty;
                 tbHSI.Text = string.Empty;
             }
+        }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+            int porc = trackBar1.Value;
+            Bitmap imgDest = new Bitmap(image);
+            imageBitmap = (Bitmap)image;
+            Filtros.SetBrightness(imageBitmap, imgDest, porc);
+            pictBoxImg.Image = imgDest;
         }
     }
 }
