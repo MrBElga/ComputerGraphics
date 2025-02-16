@@ -21,11 +21,12 @@
             this.btnAbrirImagem = new System.Windows.Forms.Button();
             this.btnLimpar = new System.Windows.Forms.Button();
             this.menuLateralPanel = new System.Windows.Forms.Panel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.trackBar2 = new System.Windows.Forms.TrackBar();
             this.label1 = new System.Windows.Forms.Label();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.tbHue = new System.Windows.Forms.TextBox();
             this.tbBrilho = new System.Windows.Forms.TextBox();
-            this.btnAjustarHue = new System.Windows.Forms.Button();
             this.lblRGB = new System.Windows.Forms.Label();
             this.tbRGB = new System.Windows.Forms.TextBox();
             this.lblCMY = new System.Windows.Forms.Label();
@@ -39,8 +40,11 @@
             this.pictureBoxPanel = new System.Windows.Forms.Panel();
             this.pictBoxImg = new System.Windows.Forms.PictureBox();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.menuSuperiorPanel.SuspendLayout();
             this.menuLateralPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.pictureBoxPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictBoxImg)).BeginInit();
@@ -89,11 +93,14 @@
             // menuLateralPanel
             // 
             this.menuLateralPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.menuLateralPanel.Controls.Add(this.label4);
+            this.menuLateralPanel.Controls.Add(this.label3);
+            this.menuLateralPanel.Controls.Add(this.label2);
+            this.menuLateralPanel.Controls.Add(this.trackBar2);
             this.menuLateralPanel.Controls.Add(this.label1);
             this.menuLateralPanel.Controls.Add(this.trackBar1);
             this.menuLateralPanel.Controls.Add(this.tbHue);
             this.menuLateralPanel.Controls.Add(this.tbBrilho);
-            this.menuLateralPanel.Controls.Add(this.btnAjustarHue);
             this.menuLateralPanel.Controls.Add(this.lblRGB);
             this.menuLateralPanel.Controls.Add(this.tbRGB);
             this.menuLateralPanel.Controls.Add(this.lblCMY);
@@ -110,6 +117,25 @@
             this.menuLateralPanel.Name = "menuLateralPanel";
             this.menuLateralPanel.Size = new System.Drawing.Size(293, 674);
             this.menuLateralPanel.TabIndex = 1;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(13, 503);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(122, 16);
+            this.label2.TabIndex = 130;
+            this.label2.Text = "Mudar Matriz (Hue):";
+            // 
+            // trackBar2
+            // 
+            this.trackBar2.Location = new System.Drawing.Point(16, 531);
+            this.trackBar2.Maximum = 180;
+            this.trackBar2.Minimum = -180;
+            this.trackBar2.Name = "trackBar2";
+            this.trackBar2.Size = new System.Drawing.Size(261, 56);
+            this.trackBar2.TabIndex = 129;
+            this.trackBar2.Scroll += new System.EventHandler(this.trackBar2_Scroll);
             // 
             // label1
             // 
@@ -132,7 +158,7 @@
             // 
             // tbHue
             // 
-            this.tbHue.Location = new System.Drawing.Point(13, 624);
+            this.tbHue.Location = new System.Drawing.Point(12, 624);
             this.tbHue.Margin = new System.Windows.Forms.Padding(4);
             this.tbHue.Name = "tbHue";
             this.tbHue.Size = new System.Drawing.Size(265, 22);
@@ -147,20 +173,6 @@
             this.tbBrilho.Size = new System.Drawing.Size(265, 22);
             this.tbBrilho.TabIndex = 125;
             this.tbBrilho.Text = "0";
-            // 
-            // btnAjustarHue
-            // 
-            this.btnAjustarHue.BackColor = System.Drawing.Color.SteelBlue;
-            this.btnAjustarHue.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAjustarHue.ForeColor = System.Drawing.Color.White;
-            this.btnAjustarHue.Location = new System.Drawing.Point(16, 537);
-            this.btnAjustarHue.Margin = new System.Windows.Forms.Padding(4);
-            this.btnAjustarHue.Name = "btnAjustarHue";
-            this.btnAjustarHue.Size = new System.Drawing.Size(267, 49);
-            this.btnAjustarHue.TabIndex = 124;
-            this.btnAjustarHue.Text = "Ajustar Hue";
-            this.btnAjustarHue.UseVisualStyleBackColor = false;
-            this.btnAjustarHue.Click += new System.EventHandler(this.btnAjustarHue_Click);
             // 
             // lblRGB
             // 
@@ -285,6 +297,24 @@
             this.pictBoxImg.TabStop = false;
             this.pictBoxImg.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictBoxImg_MouseMove);
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(107, 416);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(26, 16);
+            this.label3.TabIndex = 131;
+            this.label3.Text = "0%";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(141, 503);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(18, 16);
+            this.label4.TabIndex = 132;
+            this.label4.Text = "0°";
+            // 
             // frmPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -301,6 +331,7 @@
             this.menuSuperiorPanel.ResumeLayout(false);
             this.menuLateralPanel.ResumeLayout(false);
             this.menuLateralPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.pictureBoxPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictBoxImg)).EndInit();
@@ -327,10 +358,13 @@
         private System.Windows.Forms.Label lblCMY;
         private System.Windows.Forms.Label lblHSI;
         private System.Windows.Forms.Label lblCoordinates;
-        private System.Windows.Forms.Button btnAjustarHue;
         private System.Windows.Forms.TextBox tbBrilho;
         private System.Windows.Forms.TextBox tbHue;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.TrackBar trackBar2;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
     }
 }

@@ -183,5 +183,86 @@ namespace ProcessamentoImagens
             imageBitmap.UnlockBits(srcData);
             imgDest.UnlockBits(destData);
         }
+
+        public static void SetHue(Bitmap imageBitmap, Bitmap imgDest, int hue)
+        {
+            if (imageBitmap == null || imgDest == null)
+                throw new ArgumentNullException("Bitmaps não podem ser nulos.");
+
+            int width = imageBitmap.Width;
+            int height = imageBitmap.Height;
+
+            Rectangle rect = new Rectangle(0, 0, width, height);
+            BitmapData srcData = imageBitmap.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+            BitmapData destData = imgDest.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format24bppRgb);
+
+            int bytesPerPixel = 3;
+            int stride = srcData.Stride;
+            IntPtr srcPtr = srcData.Scan0;
+            IntPtr destPtr = destData.Scan0;
+
+            unsafe
+            {
+                byte* src = (byte*)srcPtr;
+                byte* dest = (byte*)destPtr;
+
+                for (int y = 0; y < height; y++)
+                {
+                    for (int x = 0; x < width * bytesPerPixel; x += 3)
+                    {
+                        Color pixelColor = Color.FromArgb(src[x + 2], src[x + 1], src[x]);
+                        float h, s, v;
+                        RgbToHsv(pixelColor, out h, out s, out v);
+                        h = (h + hue) % 360;
+                        if (h < 0) h += 360;
+                        Color newColor = HsvToRgb(h, s, v);
+                        dest[x] = newColor.B;
+                        dest[x + 1] = newColor.G;
+                        dest[x + 2] = newColor.R;
+                    }
+                    src += stride;
+                    dest += stride;
+                }
+            }
+
+            imageBitmap.UnlockBits(srcData);
+            imgDest.UnlockBits(destData);
+        }
+
+        private static void RgbToHsv(Color color, out float hue, out float saturation, out float value)
+        {
+            float r = color.R / 255f;
+            float g = color.G / 255f;
+            float b = color.B / 255f;
+
+            float max = Math.Max(r, Math.Max(g, b));
+            float min = Math.Min(r, Math.Min(g, b));
+
+            hue = color.GetHue();
+            saturation = max == 0 ? 0 : (max - min) / max;
+            value = max;
+        }
+
+        private static Color HsvToRgb(float hue, float saturation, float value)
+        {
+            int hi = (int)(hue / 60) % 6;
+            float f = (hue / 60) - (int)(hue / 60);
+            float p = value * (1 - saturation);
+            float q = value * (1 - f * saturation);
+            float t = value * (1 - (1 - f) * saturation);
+
+            float r = 0, g = 0, b = 0;
+            switch (hi)
+            {
+                case 0: r = value; g = t; b = p; break;
+                case 1: r = q; g = value; b = p; break;
+                case 2: r = p; g = value; b = t; break;
+                case 3: r = p; g = q; b = value; break;
+                case 4: r = t; g = p; b = value; break;
+                case 5: r = value; g = p; b = q; break;
+            }
+
+            return Color.FromArgb((int)(r * 255), (int)(g * 255), (int)(b * 255));
+        }
     }
 }

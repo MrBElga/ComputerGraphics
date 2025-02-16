@@ -231,9 +231,20 @@ namespace ProcessamentoImagens
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
             int porc = trackBar1.Value;
+            label3.Text = porc + "%";
             Bitmap imgDest = new Bitmap(image);
             imageBitmap = (Bitmap)image;
             Filtros.SetBrightness(imageBitmap, imgDest, porc);
+            pictBoxImg.Image = imgDest;
+        }
+
+        private void trackBar2_Scroll(object sender, EventArgs e)
+        {
+            int hue = trackBar2.Value;
+            label4.Text = hue + "°";
+            Bitmap imgDest = new Bitmap(image);
+            imageBitmap = new Bitmap(image);
+            Filtros.SetHue(imageBitmap, imgDest, hue);
             pictBoxImg.Image = imgDest;
         }
     }
