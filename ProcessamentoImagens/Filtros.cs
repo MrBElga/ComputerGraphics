@@ -97,5 +97,53 @@ namespace ProcessamentoImagens
             //unlock imagem destino
             imageBitmapDest.UnlockBits(bitmapDataDst);
         }
+        public static HSI[,] rgbToHsiDMA(Bitmap imageBitmap)
+        {
+            int width = imageBitmap.Width;
+            int height = imageBitmap.Height;
+            HSI[,] hsi = new HSI[width, height];
+            int pixelSize = 3;
+
+            BitmapData bitmapData = imageBitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+            int padding = bitmapData.Stride - (width * pixelSize);
+
+            unsafe
+            {
+                byte* src = (byte*)bitmapData.Scan0.ToPointer();
+
+                for (int y = 0; y < height; y++)
+                {
+                    for (int x = 0; x < width; x++)
+                    {
+                        int b = *(src++);
+                        int g = *(src++);
+                        int r = *(src++);
+
+                        float normR = (float)r / (r + g + b);
+                        float normG = (float)g / (r + g + b);
+                        float normB = (float)b / (r + g + b);
+
+                        float h = (float)Math.Acos((0.5 * ((r - g) + (r - b))) / Math.Sqrt((r - g) * (r - g) + (r - b) * (g - b)));
+                        if (b > g)
+                        {
+                            h = (float)(2 * Math.PI - h);
+                        }
+
+                        float s = 1 - 3 * Math.Min(Math.Min(normR, normG), normB);
+                        float i = (float)(r + g + b) / (3 * 255);
+
+                        int H = (int)(h * 180 / Math.PI);
+                        int S = (int)(s * 100);
+                        int I = (int)(i * 255);
+
+                        hsi[x, y] = new HSI(H, S, I);
+                    }
+                    src += padding;
+                }
+            }
+
+            imageBitmap.UnlockBits(bitmapData);
+            return hsi;
+        }
     }
 }

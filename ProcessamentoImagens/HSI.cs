@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ProcessamentoImagens
 {
-    internal class HSI
+    public class HSI
     {
         public float Hue { get; set; }
         public float Saturation { get; set; }
@@ -20,3 +20,4 @@ namespace ProcessamentoImagens
         }
     }
 }
+
