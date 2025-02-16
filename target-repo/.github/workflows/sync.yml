@@ -24,7 +24,6 @@ jobs:
 
       - name: Copiar mudanças para o repositório de destino
         run: |
-          LAST_COMMIT_AUTHOR=$(git log -1 --pretty=format:'%an <%ae>')
           rsync -av --exclude='.git' . target-repo/
           cd target-repo
           git add .
