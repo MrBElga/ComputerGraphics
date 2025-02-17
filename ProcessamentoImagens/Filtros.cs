@@ -97,54 +97,6 @@ namespace ProcessamentoImagens
             //unlock imagem destino
             imageBitmapDest.UnlockBits(bitmapDataDst);
         }
-        public static HSI[,] rgbToHsiDMA(Bitmap imageBitmap)
-        {
-            int width = imageBitmap.Width;
-            int height = imageBitmap.Height;
-            HSI[,] hsi = new HSI[width, height];
-            int pixelSize = 3;
-
-            BitmapData bitmapData = imageBitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-            int padding = bitmapData.Stride - (width * pixelSize);
-
-            unsafe
-            {
-                byte* src = (byte*)bitmapData.Scan0.ToPointer();
-
-                for (int y = 0; y < height; y++)
-                {
-                    for (int x = 0; x < width; x++)
-                    {
-                        int b = *(src++);
-                        int g = *(src++);
-                        int r = *(src++);
-
-                        float normR = (float)r / (r + g + b);
-                        float normG = (float)g / (r + g + b);
-                        float normB = (float)b / (r + g + b);
-
-                        float h = (float)Math.Acos((0.5 * ((r - g) + (r - b))) / Math.Sqrt((r - g) * (r - g) + (r - b) * (g - b)));
-                        if (b > g)
-                        {
-                            h = (float)(2 * Math.PI - h);
-                        }
-
-                        float s = 1 - 3 * Math.Min(Math.Min(normR, normG), normB);
-                        float i = (float)(r + g + b) / (3 * 255);
-
-                        int H = (int)(h * 180 / Math.PI);
-                        int S = (int)(s * 100);
-                        int I = (int)(i * 255);
-
-                        hsi[x, y] = new HSI(H, S, I);
-                    }
-                    src += padding;
-                }
-            }
-
-            imageBitmap.UnlockBits(bitmapData);
-            return hsi;
-        }
 
         public static void SetBrightness(Bitmap imageBitmap, Bitmap imgDest, int porc)
         {
@@ -264,5 +216,119 @@ namespace ProcessamentoImagens
 
             return Color.FromArgb((int)(r * 255), (int)(g * 255), (int)(b * 255));
         }
+
+        //sem DMA
+        /*
+        private HSI[,] rgbToHsiSemDMA()
+        {
+            int height = image.Height;
+            int width = image.Width;
+            HSI[,] hsi = new HSI[width, height];
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int r = imageBitmap.GetPixel(x, y).R;
+                    int g = imageBitmap.GetPixel(x, y).G;
+                    int b = imageBitmap.GetPixel(x, y).B;
+
+                    float Rnormalizado = (float)r / (r + g + b);
+                    float Gnormalizado = (float)g / (r + g + b);
+                    float Bnormalizado = (float)b / (r + g + b);
+
+                    float h = (float)Math.Acos((0.5 * ((r - g) + (r - b))) / Math.Sqrt((r - g) * (r - g) + (r - b) * (g - b)));
+                    if (b > g)
+                    {
+                        h = (float)(2 * Math.PI - h);
+                    }
+
+                    float s = 1 - 3 * Math.Min(Math.Min(Rnormalizado, Gnormalizado), Bnormalizado);
+
+                    float i = (float)(r + g + b) / (3 * 255);
+
+                    int H = (int)(h * 180 / Math.PI);
+                    int S = (int)(s * 100);
+                    int I = (int)(i * 255);
+
+                    hsi[x, y] = new HSI(H, S, I);
+                }
+            }
+            return hsi;
+        }*/
+
+        //com DMA
+        public static HSI[,] rgbToHsi(Bitmap imageBitmap)
+        {
+            int width = imageBitmap.Width;
+            int height = imageBitmap.Height;
+            HSI[,] hsi = new HSI[width, height];
+            int pixelSize = 3;
+
+            // bloqueia os bits da imagem para acesso direto à memória
+            BitmapData bitmapData = imageBitmap.LockBits(
+                new Rectangle(0, 0, width, height),
+                ImageLockMode.ReadOnly,
+                PixelFormat.Format24bppRgb
+            );
+
+            int stride = bitmapData.Stride;// linha em bytes
+            int padding = stride - (width * pixelSize); // pad no final da linha (cada linha x 4)
+
+            unsafe
+            {
+                // inicio da imagem 
+                byte* src = (byte*)bitmapData.Scan0.ToPointer();
+
+                for (int y = 0; y < height; y++)
+                {
+                    for (int x = 0; x < width; x++)
+                    {
+                        int b = *(src++);
+                        int g = *(src++);
+                        int r = *(src++);
+
+                        // normaliza os valores de R, G, B para o intervalo [0, 1]
+                        float Rnormalizado = (float)r / (r + g + b);
+                        float Gnormalizado = (float)g / (r + g + b);
+                        float Bnormalizado = (float)b / (r + g + b);
+
+                        //calculo do hue
+                        float h = (float)Math.Acos(
+                            (0.5f * ((Rnormalizado - Gnormalizado) + (Rnormalizado - Bnormalizado)) /
+                            Math.Sqrt((Rnormalizado - Gnormalizado) * (Rnormalizado - Gnormalizado) + (Rnormalizado - Bnormalizado) * (Gnormalizado - Bnormalizado))
+                        ));
+
+
+                        // se b<g valor correto ([0, pi])
+                        // se b>g o valor deve ser ajustado para 2*PI -h ([pi, 2pi])
+                        // fiz isso pq a funcao acos retorna valores entre 0 e pi (0 a 180) ent nao cobre o resto de 180 a 360
+                        if (b > g)
+                        {
+                            h = (float)(2 * Math.PI - h); // ajuste de hue se precisar
+                        }
+
+                        // calcula a saturacao
+                        float s = 1 - 3 * Math.Min(Math.Min(Rnormalizado, Gnormalizado), Bnormalizado);
+
+                        // calcula a intensidade 
+                        float i = (float)(r + g + b) / (3 * 255);
+
+                        // convertendo os valores para o formato HSI
+                        int H = (int)(h * 180 / Math.PI); // hue em graus [0, 360]
+                        int S = (int)(s * 100);           // saturacao em porcentagem [0, 100]
+                        int I = (int)(i * 255);           // intensidade em [0, 255]
+
+                        hsi[x, y] = new HSI(H, S, I);
+                    }
+                    src += padding;
+                }
+            }
+
+            // Desbloqueia os bits da imagem
+            imageBitmap.UnlockBits(bitmapData);
+
+            return hsi;
+        }
+
     }
 }
