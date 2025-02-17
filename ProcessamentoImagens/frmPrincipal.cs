@@ -50,33 +50,33 @@ namespace ProcessamentoImagens
                     Bitmap imgS = new Bitmap(image.Width, image.Height);
                     Bitmap imgI = new Bitmap(image.Width, image.Height);
 
-                    //converter para tons de cinza
+                    // Converter para tons de cinza
                     Filtros.convert_to_grayDMA(imageBitmap, imgRed, 'R');
                     Filtros.convert_to_grayDMA(imageBitmap, imgGreen, 'G');
                     Filtros.convert_to_grayDMA(imageBitmap, imgBlue, 'B');
                     Filtros.convert_to_grayDMA(imageBitmap, imgH, 'H');
                     Filtros.convert_to_grayDMA(imageBitmap, imgS, 'S');
                     Filtros.convert_to_grayDMA(imageBitmap, imgI, 'I');
-                    Color b, g, r;
-             
 
-                    //criar a imagem HSI em tons de cinza
+                    // Criar a imagem HSI em tons de cinza
                     for (int y = 0; y < image.Height; y++)
                     {
                         for (int x = 0; x < image.Width; x++)
                         {
-                         
                             int h = (int)hsi[x, y].Hue;
-                            h = normaliza(h);
-                            imgH.SetPixel(x, y, Color.FromArgb(h,h,h));
-                            int s = (int)hsi[x, y].Saturation;
-                            s = normaliza(h);
-                            imgS.SetPixel(x, y, Color.FromArgb(s,s,s));
-                            int i = (int)hsi[x, y].Intensity;
-                            i = normaliza(h);
-                            imgI.SetPixel(x, y, Color.FromArgb(i,i,i));
+                            h = Math.Min(255, Math.Max(0, h * 255 / 360)); 
+                            imgH.SetPixel(x, y, Color.FromArgb(h, h, h));
+
+                            int s = (int)(hsi[x, y].Saturation * 255); 
+                            s = Math.Min(100, Math.Max(0, s*255/100)); 
+                            imgS.SetPixel(x, y, Color.FromArgb(s, s, s));
+
+                            int i = (int)(hsi[x, y].Intensity * 255);  
+                            i = Math.Min(255, Math.Max(0, i));  
+                            imgI.SetPixel(x, y, Color.FromArgb(i, i, i));
                         }
                     }
+
                     pictBoxRed.Image = new Bitmap(imgRed, pictBoxRed.Size);
                     pictBoxGreen.Image = new Bitmap(imgGreen, pictBoxGreen.Size);
                     pictBoxBlue.Image = new Bitmap(imgBlue, pictBoxBlue.Size);
@@ -90,6 +90,7 @@ namespace ProcessamentoImagens
                 }
             }
         }
+
 
         private int normaliza(int valor)
         {
