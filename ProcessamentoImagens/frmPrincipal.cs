@@ -195,6 +195,8 @@ namespace ProcessamentoImagens
         {
             int porc = trackBar1.Value;
             label3.Text = porc + "%";
+            trackBar2.Value = 0;
+            label4.Text = "0°";
             Bitmap imgDest = new Bitmap(image);
             imageBitmap = (Bitmap)image;
             Filtros.SetBrightness(imageBitmap, imgDest, porc);
@@ -205,6 +207,8 @@ namespace ProcessamentoImagens
         {
             int hue = trackBar2.Value;
             label4.Text = hue + "°";
+            trackBar1.Value = 0;
+            label3.Text = "0%";
             Bitmap imgDest = new Bitmap(image);
             imageBitmap = new Bitmap(image);
             Filtros.SetHue(imageBitmap, imgDest, hue);
