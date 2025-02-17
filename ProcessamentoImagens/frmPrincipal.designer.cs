@@ -22,9 +22,18 @@ namespace ProcessamentoImagens
         private void InitializeComponent()
         {
             this.menuSuperiorPanel = new System.Windows.Forms.Panel();
+            this.minHue = new System.Windows.Forms.TextBox();
+            this.maxHue = new System.Windows.Forms.TextBox();
             this.btnAbrirImagem = new System.Windows.Forms.Button();
             this.btnLimpar = new System.Windows.Forms.Button();
             this.menuLateralPanel = new System.Windows.Forms.Panel();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -50,13 +59,9 @@ namespace ProcessamentoImagens
             this.pictureBoxPanel = new System.Windows.Forms.Panel();
             this.pictBoxImg = new System.Windows.Forms.PictureBox();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
             this.menuSuperiorPanel.SuspendLayout();
             this.menuLateralPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
@@ -74,14 +79,37 @@ namespace ProcessamentoImagens
             // menuSuperiorPanel
             // 
             this.menuSuperiorPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.menuSuperiorPanel.Controls.Add(this.label13);
+            this.menuSuperiorPanel.Controls.Add(this.label12);
+            this.menuSuperiorPanel.Controls.Add(this.label11);
+            this.menuSuperiorPanel.Controls.Add(this.minHue);
+            this.menuSuperiorPanel.Controls.Add(this.maxHue);
             this.menuSuperiorPanel.Controls.Add(this.btnAbrirImagem);
             this.menuSuperiorPanel.Controls.Add(this.btnLimpar);
             this.menuSuperiorPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.menuSuperiorPanel.Location = new System.Drawing.Point(0, 0);
-            this.menuSuperiorPanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.menuSuperiorPanel.Margin = new System.Windows.Forms.Padding(4);
             this.menuSuperiorPanel.Name = "menuSuperiorPanel";
             this.menuSuperiorPanel.Size = new System.Drawing.Size(1768, 74);
             this.menuSuperiorPanel.TabIndex = 2;
+            // 
+            // minHue
+            // 
+            this.minHue.Location = new System.Drawing.Point(1523, 48);
+            this.minHue.Name = "minHue";
+            this.minHue.Size = new System.Drawing.Size(100, 22);
+            this.minHue.TabIndex = 109;
+            this.minHue.Text = "0";
+            this.minHue.KeyDown += new System.Windows.Forms.KeyEventHandler(this.minHue_KeyDown);
+            // 
+            // maxHue
+            // 
+            this.maxHue.Location = new System.Drawing.Point(1629, 48);
+            this.maxHue.Name = "maxHue";
+            this.maxHue.Size = new System.Drawing.Size(100, 22);
+            this.maxHue.TabIndex = 108;
+            this.maxHue.Text = "360";
+            this.maxHue.KeyDown += new System.Windows.Forms.KeyEventHandler(this.maxHue_KeyDown);
             // 
             // btnAbrirImagem
             // 
@@ -89,7 +117,7 @@ namespace ProcessamentoImagens
             this.btnAbrirImagem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAbrirImagem.ForeColor = System.Drawing.Color.White;
             this.btnAbrirImagem.Location = new System.Drawing.Point(13, 12);
-            this.btnAbrirImagem.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnAbrirImagem.Margin = new System.Windows.Forms.Padding(4);
             this.btnAbrirImagem.Name = "btnAbrirImagem";
             this.btnAbrirImagem.Size = new System.Drawing.Size(160, 49);
             this.btnAbrirImagem.TabIndex = 106;
@@ -103,7 +131,7 @@ namespace ProcessamentoImagens
             this.btnLimpar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLimpar.ForeColor = System.Drawing.Color.White;
             this.btnLimpar.Location = new System.Drawing.Point(187, 12);
-            this.btnLimpar.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnLimpar.Margin = new System.Windows.Forms.Padding(4);
             this.btnLimpar.Name = "btnLimpar";
             this.btnLimpar.Size = new System.Drawing.Size(160, 49);
             this.btnLimpar.TabIndex = 107;
@@ -145,10 +173,78 @@ namespace ProcessamentoImagens
             this.menuLateralPanel.Controls.Add(this.pictBoxI);
             this.menuLateralPanel.Dock = System.Windows.Forms.DockStyle.Right;
             this.menuLateralPanel.Location = new System.Drawing.Point(1475, 74);
-            this.menuLateralPanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.menuLateralPanel.Margin = new System.Windows.Forms.Padding(4);
             this.menuLateralPanel.Name = "menuLateralPanel";
             this.menuLateralPanel.Size = new System.Drawing.Size(293, 854);
             this.menuLateralPanel.TabIndex = 1;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(238, 748);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(10, 16);
+            this.label10.TabIndex = 145;
+            this.label10.Text = "I";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(141, 748);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(16, 16);
+            this.label9.TabIndex = 144;
+            this.label9.Text = "S";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(139, 644);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(17, 16);
+            this.label8.TabIndex = 143;
+            this.label8.Text = "G";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(232, 644);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(16, 16);
+            this.label7.TabIndex = 142;
+            this.label7.Text = "B";
+            // 
+            // button1
+            // 
+            this.button1.BackColor = System.Drawing.Color.SteelBlue;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.ForeColor = System.Drawing.Color.White;
+            this.button1.Location = new System.Drawing.Point(16, 585);
+            this.button1.Margin = new System.Windows.Forms.Padding(4);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(267, 49);
+            this.button1.TabIndex = 141;
+            this.button1.Text = "Gerar Miniaturas";
+            this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(45, 748);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(17, 16);
+            this.label6.TabIndex = 140;
+            this.label6.Text = "H";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(45, 644);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(17, 16);
+            this.label5.TabIndex = 139;
+            this.label5.Text = "R";
             // 
             // label4
             // 
@@ -173,9 +269,9 @@ namespace ProcessamentoImagens
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(13, 503);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(122, 16);
+            this.label2.Size = new System.Drawing.Size(118, 16);
             this.label2.TabIndex = 130;
-            this.label2.Text = "Mudar Matriz (Hue):";
+            this.label2.Text = "Mudar Matiz (Hue):";
             // 
             // trackBar2
             // 
@@ -221,7 +317,7 @@ namespace ProcessamentoImagens
             // tbRGB
             // 
             this.tbRGB.Location = new System.Drawing.Point(13, 49);
-            this.tbRGB.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbRGB.Margin = new System.Windows.Forms.Padding(4);
             this.tbRGB.Name = "tbRGB";
             this.tbRGB.Size = new System.Drawing.Size(265, 22);
             this.tbRGB.TabIndex = 115;
@@ -239,7 +335,7 @@ namespace ProcessamentoImagens
             // tbCMY
             // 
             this.tbCMY.Location = new System.Drawing.Point(13, 111);
-            this.tbCMY.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbCMY.Margin = new System.Windows.Forms.Padding(4);
             this.tbCMY.Name = "tbCMY";
             this.tbCMY.Size = new System.Drawing.Size(265, 22);
             this.tbCMY.TabIndex = 117;
@@ -257,7 +353,7 @@ namespace ProcessamentoImagens
             // tbHSI
             // 
             this.tbHSI.Location = new System.Drawing.Point(13, 172);
-            this.tbHSI.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbHSI.Margin = new System.Windows.Forms.Padding(4);
             this.tbHSI.Name = "tbHSI";
             this.tbHSI.Size = new System.Drawing.Size(265, 22);
             this.tbHSI.TabIndex = 119;
@@ -275,7 +371,7 @@ namespace ProcessamentoImagens
             // tbCoordinates
             // 
             this.tbCoordinates.Location = new System.Drawing.Point(13, 234);
-            this.tbCoordinates.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbCoordinates.Margin = new System.Windows.Forms.Padding(4);
             this.tbCoordinates.Name = "tbCoordinates";
             this.tbCoordinates.Size = new System.Drawing.Size(265, 22);
             this.tbCoordinates.TabIndex = 121;
@@ -286,7 +382,7 @@ namespace ProcessamentoImagens
             this.btnLuminanciaComDMA.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLuminanciaComDMA.ForeColor = System.Drawing.Color.White;
             this.btnLuminanciaComDMA.Location = new System.Drawing.Point(13, 283);
-            this.btnLuminanciaComDMA.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnLuminanciaComDMA.Margin = new System.Windows.Forms.Padding(4);
             this.btnLuminanciaComDMA.Name = "btnLuminanciaComDMA";
             this.btnLuminanciaComDMA.Size = new System.Drawing.Size(267, 49);
             this.btnLuminanciaComDMA.TabIndex = 109;
@@ -300,7 +396,7 @@ namespace ProcessamentoImagens
             this.btnNegativoComDMA.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnNegativoComDMA.ForeColor = System.Drawing.Color.White;
             this.btnNegativoComDMA.Location = new System.Drawing.Point(13, 345);
-            this.btnNegativoComDMA.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnNegativoComDMA.Margin = new System.Windows.Forms.Padding(4);
             this.btnNegativoComDMA.Name = "btnNegativoComDMA";
             this.btnNegativoComDMA.Size = new System.Drawing.Size(267, 49);
             this.btnNegativoComDMA.TabIndex = 111;
@@ -312,7 +408,7 @@ namespace ProcessamentoImagens
             // 
             this.pictBoxRed.BackColor = System.Drawing.Color.White;
             this.pictBoxRed.Location = new System.Drawing.Point(13, 664);
-            this.pictBoxRed.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pictBoxRed.Margin = new System.Windows.Forms.Padding(4);
             this.pictBoxRed.Name = "pictBoxRed";
             this.pictBoxRed.Size = new System.Drawing.Size(80, 74);
             this.pictBoxRed.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -323,7 +419,7 @@ namespace ProcessamentoImagens
             // 
             this.pictBoxGreen.BackColor = System.Drawing.Color.White;
             this.pictBoxGreen.Location = new System.Drawing.Point(107, 664);
-            this.pictBoxGreen.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pictBoxGreen.Margin = new System.Windows.Forms.Padding(4);
             this.pictBoxGreen.Name = "pictBoxGreen";
             this.pictBoxGreen.Size = new System.Drawing.Size(80, 74);
             this.pictBoxGreen.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -334,7 +430,7 @@ namespace ProcessamentoImagens
             // 
             this.pictBoxBlue.BackColor = System.Drawing.Color.White;
             this.pictBoxBlue.Location = new System.Drawing.Point(200, 664);
-            this.pictBoxBlue.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pictBoxBlue.Margin = new System.Windows.Forms.Padding(4);
             this.pictBoxBlue.Name = "pictBoxBlue";
             this.pictBoxBlue.Size = new System.Drawing.Size(80, 74);
             this.pictBoxBlue.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -345,7 +441,7 @@ namespace ProcessamentoImagens
             // 
             this.pictBoxH.BackColor = System.Drawing.Color.White;
             this.pictBoxH.Location = new System.Drawing.Point(13, 768);
-            this.pictBoxH.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pictBoxH.Margin = new System.Windows.Forms.Padding(4);
             this.pictBoxH.Name = "pictBoxH";
             this.pictBoxH.Size = new System.Drawing.Size(80, 74);
             this.pictBoxH.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -356,7 +452,7 @@ namespace ProcessamentoImagens
             // 
             this.pictBoxS.BackColor = System.Drawing.Color.White;
             this.pictBoxS.Location = new System.Drawing.Point(107, 768);
-            this.pictBoxS.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pictBoxS.Margin = new System.Windows.Forms.Padding(4);
             this.pictBoxS.Name = "pictBoxS";
             this.pictBoxS.Size = new System.Drawing.Size(80, 74);
             this.pictBoxS.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -367,7 +463,7 @@ namespace ProcessamentoImagens
             // 
             this.pictBoxI.BackColor = System.Drawing.Color.White;
             this.pictBoxI.Location = new System.Drawing.Point(200, 768);
-            this.pictBoxI.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pictBoxI.Margin = new System.Windows.Forms.Padding(4);
             this.pictBoxI.Name = "pictBoxI";
             this.pictBoxI.Size = new System.Drawing.Size(80, 74);
             this.pictBoxI.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -380,7 +476,7 @@ namespace ProcessamentoImagens
             this.pictureBoxPanel.Controls.Add(this.pictBoxImg);
             this.pictureBoxPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxPanel.Location = new System.Drawing.Point(0, 74);
-            this.pictureBoxPanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pictureBoxPanel.Margin = new System.Windows.Forms.Padding(4);
             this.pictureBoxPanel.Name = "pictureBoxPanel";
             this.pictureBoxPanel.Size = new System.Drawing.Size(1475, 854);
             this.pictureBoxPanel.TabIndex = 0;
@@ -390,80 +486,42 @@ namespace ProcessamentoImagens
             this.pictBoxImg.BackColor = System.Drawing.Color.White;
             this.pictBoxImg.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictBoxImg.Location = new System.Drawing.Point(0, 0);
-            this.pictBoxImg.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pictBoxImg.Margin = new System.Windows.Forms.Padding(4);
             this.pictBoxImg.Name = "pictBoxImg";
             this.pictBoxImg.Size = new System.Drawing.Size(1475, 854);
             this.pictBoxImg.TabIndex = 0;
             this.pictBoxImg.TabStop = false;
             this.pictBoxImg.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictBoxImg_MouseMove);
             // 
-            // label5
+            // label11
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(45, 644);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(17, 16);
-            this.label5.TabIndex = 139;
-            this.label5.Text = "R";
+            this.label11.AutoSize = true;
+            this.label11.ForeColor = System.Drawing.Color.White;
+            this.label11.Location = new System.Drawing.Point(1521, 7);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(113, 16);
+            this.label11.TabIndex = 110;
+            this.label11.Text = "Filtrar Matiz (Hue):";
             // 
-            // label6
+            // label12
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(45, 748);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(17, 16);
-            this.label6.TabIndex = 140;
-            this.label6.Text = "H";
+            this.label12.AutoSize = true;
+            this.label12.ForeColor = System.Drawing.Color.White;
+            this.label12.Location = new System.Drawing.Point(1521, 29);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(31, 16);
+            this.label12.TabIndex = 111;
+            this.label12.Text = "Min:";
             // 
-            // button1
+            // label13
             // 
-            this.button1.BackColor = System.Drawing.Color.SteelBlue;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.ForeColor = System.Drawing.Color.White;
-            this.button1.Location = new System.Drawing.Point(16, 585);
-            this.button1.Margin = new System.Windows.Forms.Padding(4);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(267, 49);
-            this.button1.TabIndex = 141;
-            this.button1.Text = "Gerar Miniaturas";
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(232, 644);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(16, 16);
-            this.label7.TabIndex = 142;
-            this.label7.Text = "B";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(139, 644);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(17, 16);
-            this.label8.TabIndex = 143;
-            this.label8.Text = "G";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(141, 748);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(16, 16);
-            this.label9.TabIndex = 144;
-            this.label9.Text = "S";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(238, 748);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(10, 16);
-            this.label10.TabIndex = 145;
-            this.label10.Text = "I";
+            this.label13.AutoSize = true;
+            this.label13.ForeColor = System.Drawing.Color.White;
+            this.label13.Location = new System.Drawing.Point(1626, 29);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(35, 16);
+            this.label13.TabIndex = 112;
+            this.label13.Text = "Max:";
             // 
             // frmPrincipal
             // 
@@ -473,12 +531,13 @@ namespace ProcessamentoImagens
             this.Controls.Add(this.pictureBoxPanel);
             this.Controls.Add(this.menuLateralPanel);
             this.Controls.Add(this.menuSuperiorPanel);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "frmPrincipal";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Processamento de Imagens";
             this.Load += new System.EventHandler(this.frmPrincipal_Load);
             this.menuSuperiorPanel.ResumeLayout(false);
+            this.menuSuperiorPanel.PerformLayout();
             this.menuLateralPanel.ResumeLayout(false);
             this.menuLateralPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
@@ -532,5 +591,10 @@ namespace ProcessamentoImagens
         private Label label9;
         private Label label8;
         private Label label7;
+        private TextBox minHue;
+        private TextBox maxHue;
+        private Label label11;
+        private Label label13;
+        private Label label12;
     }
 }

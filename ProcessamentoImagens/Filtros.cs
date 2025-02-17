@@ -216,48 +216,140 @@ namespace ProcessamentoImagens
 
             return Color.FromArgb((int)(r * 255), (int)(g * 255), (int)(b * 255));
         }
-
-        //sem DMA
-        /*
-        private HSI[,] rgbToHsiSemDMA()
+        
+        public static void FilterByHue(Bitmap src, Bitmap dest, int minHue, int maxHue)
         {
-            int height = image.Height;
-            int width = image.Width;
-            HSI[,] hsi = new HSI[width, height];
-            for (int y = 0; y < height; y++)
+            if (src == null || dest == null || src.Width != dest.Width || src.Height != dest.Height)
             {
-                for (int x = 0; x < width; x++)
+                throw new ArgumentException("As imagens de origem e destino devem ter as mesmas dimensões.");
+            }
+
+            Rectangle rect = new Rectangle(0, 0, src.Width, src.Height);
+            BitmapData srcData = src.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+            BitmapData destData = dest.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format24bppRgb);
+
+            int bytesPerPixel = 3;
+            int stride = srcData.Stride;
+
+            unsafe
+            {
+                byte* srcPtr = (byte*)srcData.Scan0;
+                byte* destPtr = (byte*)destData.Scan0;
+
+                for (int y = 0; y < src.Height; y++)
                 {
-                    int r = imageBitmap.GetPixel(x, y).R;
-                    int g = imageBitmap.GetPixel(x, y).G;
-                    int b = imageBitmap.GetPixel(x, y).B;
-
-                    float Rnormalizado = (float)r / (r + g + b);
-                    float Gnormalizado = (float)g / (r + g + b);
-                    float Bnormalizado = (float)b / (r + g + b);
-
-                    float h = (float)Math.Acos((0.5 * ((r - g) + (r - b))) / Math.Sqrt((r - g) * (r - g) + (r - b) * (g - b)));
-                    if (b > g)
+                    for (int x = 0; x < src.Width; x++)
                     {
-                        h = (float)(2 * Math.PI - h);
+                        int index = y * stride + x * bytesPerPixel;
+
+                        byte b = srcPtr[index];
+                        byte g = srcPtr[index + 1];
+                        byte r = srcPtr[index + 2];
+
+                        // Converte RGB para Hue no intervalo 0-360°
+                        float h = RGBtoHue(r, g, b);
+
+                        // Verifica se está dentro do intervalo selecionado
+                        if ((minHue <= maxHue && h >= minHue && h <= maxHue) ||
+                            (minHue > maxHue && (h >= minHue || h <= maxHue)))
+                        {
+                            destPtr[index] = b;
+                            destPtr[index + 1] = g;
+                            destPtr[index + 2] = r;
+                        }
+                        else
+                        {
+                            destPtr[index] = 0;
+                            destPtr[index + 1] = 0;
+                            destPtr[index + 2] = 0;
+                        }
                     }
-
-                    float s = 1 - 3 * Math.Min(Math.Min(Rnormalizado, Gnormalizado), Bnormalizado);
-
-                    float i = (float)(r + g + b) / (3 * 255);
-
-                    int H = (int)(h * 180 / Math.PI);
-                    int S = (int)(s * 100);
-                    int I = (int)(i * 255);
-
-                    hsi[x, y] = new HSI(H, S, I);
                 }
             }
-            return hsi;
-        }*/
 
-        //com DMA
-        public static HSI[,] rgbToHsi(Bitmap imageBitmap)
+            src.UnlockBits(srcData);
+            dest.UnlockBits(destData);
+        }
+
+        private static float RGBtoHue(byte r, byte g, byte b)
+        {
+            float rf = r / 255f;
+            float gf = g / 255f;
+            float bf = b / 255f;
+
+            float max = Math.Max(rf, Math.Max(gf, bf));
+            float min = Math.Min(rf, Math.Min(gf, bf));
+            float delta = max - min;
+
+            float hue = 0;
+
+            if (delta > 0)
+            {
+                if (max == rf)
+                {
+                    hue = 60 * (((gf - bf) / delta) % 6);
+                }
+                else if (max == gf)
+                {
+                    hue = 60 * (((bf - rf) / delta) + 2);
+                }
+                else
+                {
+                    hue = 60 * (((rf - gf) / delta) + 4);
+                }
+            }
+
+            if (hue < 0)
+            {
+                hue += 360;
+            }
+
+            return hue; // Mantém no intervalo de 0 a 360°
+        }
+    
+
+
+    //sem DMA
+    /*
+    private HSI[,] rgbToHsiSemDMA()
+    {
+        int height = image.Height;
+        int width = image.Width;
+        HSI[,] hsi = new HSI[width, height];
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                int r = imageBitmap.GetPixel(x, y).R;
+                int g = imageBitmap.GetPixel(x, y).G;
+                int b = imageBitmap.GetPixel(x, y).B;
+
+                float Rnormalizado = (float)r / (r + g + b);
+                float Gnormalizado = (float)g / (r + g + b);
+                float Bnormalizado = (float)b / (r + g + b);
+
+                float h = (float)Math.Acos((0.5 * ((r - g) + (r - b))) / Math.Sqrt((r - g) * (r - g) + (r - b) * (g - b)));
+                if (b > g)
+                {
+                    h = (float)(2 * Math.PI - h);
+                }
+
+                float s = 1 - 3 * Math.Min(Math.Min(Rnormalizado, Gnormalizado), Bnormalizado);
+
+                float i = (float)(r + g + b) / (3 * 255);
+
+                int H = (int)(h * 180 / Math.PI);
+                int S = (int)(s * 100);
+                int I = (int)(i * 255);
+
+                hsi[x, y] = new HSI(H, S, I);
+            }
+        }
+        return hsi;
+    }*/
+
+    //com DMA
+    public static HSI[,] rgbToHsi(Bitmap imageBitmap)
         {
             int width = imageBitmap.Width;
             int height = imageBitmap.Height;

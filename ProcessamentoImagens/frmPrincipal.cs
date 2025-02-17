@@ -365,5 +365,58 @@ namespace ProcessamentoImagens
                 }
             }
         }
+
+        private void AtualizarImagem()
+        {
+            if (image == null)
+            {
+                MessageBox.Show("Carregue uma imagem primeiro!");
+                return;
+            }
+
+            if (!int.TryParse(minHue.Text, out int min) || !int.TryParse(maxHue.Text, out int max))
+            {
+                MessageBox.Show("Digite valores numéricos válidos para o Hue.");
+                return;
+            }
+
+            if(min > 360) minHue.Text = "360";
+            
+            if(max > 360) maxHue.Text = "360";
+
+            min = Math.Max(0, Math.Min(360, min));
+            max = Math.Max(0, Math.Min(360, max));
+
+            if (min > max)
+            {
+                minHue.Text = maxHue.Text;
+                MessageBox.Show("O valor mínimo não pode ser maior que o máximo.");
+                return;
+            }
+
+            Bitmap imgDest = new Bitmap(image);
+            imageBitmap = (Bitmap)image;
+
+            Filtros.FilterByHue(imageBitmap, imgDest, min, max);
+            pictBoxImg.Image = imgDest;
+        }
+
+        private void maxHue_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                AtualizarImagem();
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private void minHue_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                AtualizarImagem();
+                e.SuppressKeyPress = true;
+            }
+        }
     }
 }
