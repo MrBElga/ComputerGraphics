@@ -29,10 +29,10 @@ namespace ProcessamentoImagens
             {
                 image = Image.FromFile(openFileDialog.FileName);
                 pictBoxImg.Image = image;
-                pictBoxImg.SizeMode = PictureBoxSizeMode.Zoom;
+                pictBoxImg.SizeMode = PictureBoxSizeMode.Normal;
                 imageBitmap = (Bitmap)image;
                 hsi = Filtros.rgbToHsi(imageBitmap);
-                updatePictures(imageBitmap);
+                //updatePictures(imageBitmap);
             }
         }
 
@@ -215,6 +215,9 @@ namespace ProcessamentoImagens
             pictBoxImg.Image = imgDest;
         }
 
-   
+        private void button1_Click(object sender, EventArgs e)
+        {
+            updatePictures(imageBitmap);
+        }
     }
 }
