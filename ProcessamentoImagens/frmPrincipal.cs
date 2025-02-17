@@ -61,17 +61,21 @@ namespace ProcessamentoImagens
                     // Criar a imagem HSI em tons de cinza
                     for (int y = 0; y < image.Height; y++)
                     {
+                        if (y == 1)
+                        {
+                            y = y;
+                        }
                         for (int x = 0; x < image.Width; x++)
                         {
                             int h = (int)hsi[x, y].Hue;
                             h = Math.Min(255, Math.Max(0, h * 255 / 360)); 
                             imgH.SetPixel(x, y, Color.FromArgb(h, h, h));
 
-                            int s = (int)(hsi[x, y].Saturation * 255); 
-                            s = Math.Min(100, Math.Max(0, s*255/100)); 
+                            int s = (int)hsi[x, y].Saturation; 
+                            s = Math.Min(100, Math.Max(0, s * 255 / 100)); 
                             imgS.SetPixel(x, y, Color.FromArgb(s, s, s));
 
-                            int i = (int)(hsi[x, y].Intensity * 255);  
+                            int i = (int)hsi[x, y].Intensity;  
                             i = Math.Min(255, Math.Max(0, i));  
                             imgI.SetPixel(x, y, Color.FromArgb(i, i, i));
                         }
