@@ -32,7 +32,7 @@ namespace ProcessamentoImagens
                 pictBoxImg.SizeMode = PictureBoxSizeMode.Normal;
                 imageBitmap = (Bitmap)image;
                 hsi = Filtros.rgbToHsi(imageBitmap);
-                //updatePictures(imageBitmap);
+               
             }
         }
 
@@ -211,45 +211,72 @@ namespace ProcessamentoImagens
         private void btnLimpar_Click(object sender, EventArgs e)
         {
             pictBoxImg.Image = null;
+            pictBoxBlue.Image = null;
+            pictBoxRed.Image = null;
+            pictBoxGreen.Image = null;
+            pictBoxH.Image = null;
+            pictBoxS.Image = null;
+            pictBoxI.Image = null;
         }
 
         private void btnLuminanciaComDMA_Click(object sender, EventArgs e)
         {
             // Verifica se a imagem foi carregada
-            if (image == null)
+            if (imageBitmap == null)
             {
                 MessageBox.Show("Por favor, abra uma imagem primeiro.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
 
-            try
+            }
+            else
             {
-                // Cria uma cópia da imagem original
-                Bitmap imgDest = new Bitmap(image);
+                try
+                {
+                    // Cria uma cópia da imagem original
+                    Bitmap imgDest = new Bitmap(image);
 
-                // Converte a imagem para Bitmap (se necessário)
-                imageBitmap = (Bitmap)image;
+                    // Converte a imagem para Bitmap (se necessário)
+                    imageBitmap = (Bitmap)image;
 
-                // Aplica o filtro de luminância com DMA
-                Filtros.convert_to_grayDMA(imageBitmap, imgDest);
+                    // Aplica o filtro de luminância com DMA
+                    Filtros.convert_to_grayDMA(imageBitmap, imgDest);
 
-                // Exibe a imagem processada no PictureBox
-                pictBoxImg.Image = imgDest;
+                    // Exibe a imagem processada no PictureBox
+                    pictBoxImg.Image = imgDest;
+                }
+                catch (Exception ex)
+                {
+                    // Exibe uma mensagem de erro se algo der errado
+                    MessageBox.Show("Ocorreu um erro ao processar a imagem: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
-            catch (Exception ex)
-            {
-                // Exibe uma mensagem de erro se algo der errado
-                MessageBox.Show("Ocorreu um erro ao processar a imagem: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            
+           
         }
 
         private void btnNegativoComDMA_Click(object sender, EventArgs e)
         {
-            Bitmap imgDest = new Bitmap(image);
-            imageBitmap = (Bitmap)image;
-            Filtros.negativoDMA(imageBitmap, imgDest);
-            pictBoxImg.Image = imgDest;
+            if (imageBitmap == null)
+            {
+                MessageBox.Show("Por favor, abra uma imagem primeiro.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            }
+            else
+            {
+                try
+                {
+                    Bitmap imgDest = new Bitmap(image);
+                    imageBitmap = (Bitmap)image;
+                    Filtros.negativoDMA(imageBitmap, imgDest);
+                    pictBoxImg.Image = imgDest;
+                }
+                catch (Exception ex)
+                {
+                    // Exibe uma mensagem de erro se algo der errado
+                    MessageBox.Show("Ocorreu um erro ao processar a imagem: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
+
         private void btnAjustarBrilho_Click(object sender, EventArgs e)
         {
             //implementar 
@@ -320,7 +347,23 @@ namespace ProcessamentoImagens
 
         private void button1_Click(object sender, EventArgs e)
         {
-            updatePictures(imageBitmap);
+            if (imageBitmap == null)
+            {
+                MessageBox.Show("Por favor, abra uma imagem primeiro.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            }
+            else
+            {
+                try
+                {
+                  updatePictures(imageBitmap);
+                }
+                catch (Exception ex)
+                {
+                    // Exibe uma mensagem de erro se algo der errado
+                    MessageBox.Show("Ocorreu um erro ao processar a imagem: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
     }
 }
