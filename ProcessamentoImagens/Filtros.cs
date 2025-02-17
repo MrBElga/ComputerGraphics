@@ -245,11 +245,9 @@ namespace ProcessamentoImagens
                         byte b = srcPtr[index];
                         byte g = srcPtr[index + 1];
                         byte r = srcPtr[index + 2];
-
-                        // Converte RGB para Hue no intervalo 0-360°
+                    
                         float h = RGBtoHue(r, g, b);
 
-                        // Verifica se está dentro do intervalo selecionado
                         if ((minHue <= maxHue && h >= minHue && h <= maxHue) ||
                             (minHue > maxHue && (h >= minHue || h <= maxHue)))
                         {
@@ -349,7 +347,7 @@ namespace ProcessamentoImagens
     }*/
 
     //com DMA
-    public static HSI[,] rgbToHsi(Bitmap imageBitmap)
+        public static HSI[,] rgbToHsi(Bitmap imageBitmap)
         {
             int width = imageBitmap.Width;
             int height = imageBitmap.Height;
