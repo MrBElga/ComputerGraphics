@@ -330,5 +330,65 @@ namespace ProcessamentoImagens
             return hsi;
         }
 
+        public static void convert_to_grayDMA(Bitmap imageBitmapSrc, Bitmap imageBitmapDest, char channel)
+        {
+            int width = imageBitmapSrc.Width;
+            int height = imageBitmapSrc.Height;
+            int pixelSize = 3;
+            Int32 gs;
+
+            //lock dados bitmap origem
+            BitmapData bitmapDataSrc = imageBitmapSrc.LockBits(new Rectangle(0, 0, width, height),
+                ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+            //lock dados bitmap destino
+            BitmapData bitmapDataDst = imageBitmapDest.LockBits(new Rectangle(0, 0, width, height),
+                ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+            int padding = bitmapDataSrc.Stride - (width * pixelSize);
+
+            unsafe
+            {
+                byte* src = (byte*)bitmapDataSrc.Scan0.ToPointer();
+                byte* dst = (byte*)bitmapDataDst.Scan0.ToPointer();
+
+                int r, g, b;
+                for (int y = 0; y < height; y++)
+                {
+                    for (int x = 0; x < width; x++)
+                    {
+                        b = *(src++); //está armazenado dessa forma: b g r 
+                        g = *(src++);
+                        r = *(src++);
+
+                        switch (channel)
+                        {
+                            case 'R':
+                                gs = (Int32)(r * 0.2990 + r * 0.5870 + r * 0.1140);
+                                break;
+                            case 'G':
+                                gs = (Int32)(g * 0.2990 + g * 0.5870 + g * 0.1140);
+                                break;
+                            case 'B':
+                                gs = (Int32)(b * 0.2990 + b * 0.5870 + b * 0.1140);
+                                break;
+                            default:
+                                gs = (Int32)(r * 0.2990 + g * 0.5870 + b * 0.1140);
+                                break;
+                        }
+
+                        *(dst++) = (byte)gs;
+                        *(dst++) = (byte)gs;
+                        *(dst++) = (byte)gs;
+                    }
+                    src += padding;
+                    dst += padding;
+                }
+            }
+            //unlock imagem origem
+            imageBitmapSrc.UnlockBits(bitmapDataSrc);
+            //unlock imagem destino
+            imageBitmapDest.UnlockBits(bitmapDataDst);
+        }
+
     }
 }

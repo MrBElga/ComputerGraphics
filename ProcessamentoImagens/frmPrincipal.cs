@@ -15,6 +15,7 @@ namespace ProcessamentoImagens
         private Bitmap imageBitmap;
         private HSI[,] hsi;
 
+
         public frmPrincipal()
         {
             InitializeComponent();
@@ -31,9 +32,79 @@ namespace ProcessamentoImagens
                 pictBoxImg.SizeMode = PictureBoxSizeMode.Zoom;
                 imageBitmap = (Bitmap)image;
                 hsi = Filtros.rgbToHsi(imageBitmap);
+                updatePictures(imageBitmap);
             }
         }
 
+        private void updatePictures(Bitmap imageBitmap)
+        {
+            if (imageBitmap != null)
+            {
+                try
+                {
+                    Bitmap imgRed = new Bitmap(image.Width, image.Height);
+                    Bitmap imgGreen = new Bitmap(image.Width, image.Height);
+                    Bitmap imgBlue = new Bitmap(image.Width, image.Height);
+
+                    Bitmap imgH = new Bitmap(image.Width, image.Height);
+                    Bitmap imgS = new Bitmap(image.Width, image.Height);
+                    Bitmap imgI = new Bitmap(image.Width, image.Height);
+
+                    //converter para tons de cinza
+                    Filtros.convert_to_grayDMA(imageBitmap, imgRed, 'R');
+                    Filtros.convert_to_grayDMA(imageBitmap, imgGreen, 'G');
+                    Filtros.convert_to_grayDMA(imageBitmap, imgBlue, 'B');
+                    Filtros.convert_to_grayDMA(imageBitmap, imgH, 'H');
+                    Filtros.convert_to_grayDMA(imageBitmap, imgS, 'S');
+                    Filtros.convert_to_grayDMA(imageBitmap, imgI, 'I');
+                    Color b, g, r;
+             
+
+                    //criar a imagem HSI em tons de cinza
+                    for (int y = 0; y < image.Height; y++)
+                    {
+                        for (int x = 0; x < image.Width; x++)
+                        {
+                         
+                            int h = (int)hsi[x, y].Hue;
+                            h = normaliza(h);
+                            imgH.SetPixel(x, y, Color.FromArgb(h,h,h));
+                            int s = (int)hsi[x, y].Saturation;
+                            s = normaliza(h);
+                            imgS.SetPixel(x, y, Color.FromArgb(s,s,s));
+                            int i = (int)hsi[x, y].Intensity;
+                            i = normaliza(h);
+                            imgI.SetPixel(x, y, Color.FromArgb(i,i,i));
+                        }
+                    }
+                    pictBoxRed.Image = new Bitmap(imgRed, pictBoxRed.Size);
+                    pictBoxGreen.Image = new Bitmap(imgGreen, pictBoxGreen.Size);
+                    pictBoxBlue.Image = new Bitmap(imgBlue, pictBoxBlue.Size);
+                    pictBoxH.Image = new Bitmap(imgH, pictBoxH.Size);
+                    pictBoxS.Image = new Bitmap(imgS, pictBoxS.Size);
+                    pictBoxI.Image = new Bitmap(imgI, pictBoxI.Size);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Ocorreu um erro ao processar a imagem: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private int normaliza(int valor)
+        {
+            if (valor > 255)
+            {
+                valor = 255; 
+            }
+            if (valor < 0)
+            {
+                valor = 0;
+            }
+
+            return valor;
+        }
+ 
         private void btnLimpar_Click(object sender, EventArgs e)
         {
             pictBoxImg.Image = null;
@@ -86,6 +157,10 @@ namespace ProcessamentoImagens
             //implementar 
         }
 
+        private void btnProcessarCanais_Click(object sender, EventArgs e)
+        {
+           
+        }
         private void frmPrincipal_Load(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Maximized; // Define a janela como maximizada
@@ -135,5 +210,7 @@ namespace ProcessamentoImagens
             Filtros.SetHue(imageBitmap, imgDest, hue);
             pictBoxImg.Image = imgDest;
         }
+
+   
     }
 }
