@@ -96,29 +96,6 @@ namespace ProcessamentoImagens
             this.WindowState = FormWindowState.Maximized; // Define a janela como maximizada
         }
 
-        private void pictBoxImg_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (image != null && e.X >= 0 && e.X < image.Width && e.Y >= 0 && e.Y < image.Height)
-            {
-                tbCoordinates.Text = $"X: {e.X}, Y: {e.Y}";
-                Color pixel = imageBitmap.GetPixel(e.X, e.Y);
-                tbRGB.Text = $"R: {pixel.R}, G: {pixel.G}, B: {pixel.B}";
 
-                float c = 1 - (pixel.R / 255f);
-                float m = 1 - (pixel.G / 255f);
-                float y = 1 - (pixel.B / 255f);
-
-                tbCMY.Text = $"C: {c:F2}, M: {m:F2}, Y: {y:F2}";
-
-                tbHSI.Text = $"H: {hsi[e.X, e.Y].Hue}, S: {hsi[e.X, e.Y].Saturation}, I: {hsi[e.X, e.Y].Intensity}";
-            }
-            else
-            {
-                tbCoordinates.Text = string.Empty;
-                tbRGB.Text = string.Empty;
-                tbCMY.Text = string.Empty;
-                tbHSI.Text = string.Empty;
-            }
-        }
     }
 }
