@@ -1,95 +1,115 @@
 ﻿using ProcessamentoImagens.Draws;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProcessamentoImagens._2D
 {
     class Graph
     {
-        private Point source;
-        private Point destiny;
-        private string description;
-        private string name;
-        private string algorithm;
+        private Point _source;
+        private Point _destination;
+        private string _description;
+        private string _name;
+        private string _algorithm;
 
         public Graph(int x1, int y1, int x2, int y2, string name, string algorithm)
         {
-            this.Source = new Point(x1, y1);
-            this.Destiny = new Point(x2, y2);
-            this.Name = name;
-            this.Algorithm = algorithm;
-            this.Description = this.Name + ": (" + x1 + "," + y1 + ")(" + x2 + "," + y2 + ") - " + this.Algorithm;
+            Source = new Point(x1, y1);
+            Destination = new Point(x2, y2);
+            Name = name;
+            Algorithm = algorithm;
+            Description = $"{Name}: ({x1},{y1})({x2},{y2}) - {Algorithm}";
         }
 
-        public void setSource(int x, int y)
+        public void SetSource(int x, int y)
         {
-            this.source = new Point(x, y);
+            Source = new Point(x, y);
         }
 
-        public void setDestiny(int x, int y)
+        public void SetDestination(int x, int y)
         {
-            this.destiny = new Point(x, y);
+            Destination = new Point(x, y);
         }
 
-        public string Name { get => this.name; set => this.name = value; }
-        public string Algorithm { get => this.algorithm; set => this.algorithm = value; }
-        public Point Source { get => this.source; set => this.source = value; }
-        public Point Destiny { get => this.destiny; set => this.destiny = value; }
-        public string Description { get => this.description; set => this.description = value; }
-
-        public Bitmap ReDraw(Bitmap img, Color cor)
+        public string Name
         {
-            Bitmap btm = new Bitmap(img);
-            switch (this.name)
+            get => _name;
+            set => _name = value;
+        }
+
+        public string Algorithm
+        {
+            get => _algorithm;
+            set => _algorithm = value;
+        }
+
+        public Point Source
+        {
+            get => _source;
+            set => _source = value;
+        }
+
+        public Point Destination
+        {
+            get => _destination;
+            set => _destination = value;
+        }
+
+        public string Description
+        {
+            get => _description;
+            set => _description = value;
+        }
+
+        public Bitmap ReDraw(Bitmap img, Color color)
+        {
+            Bitmap bitmap = new Bitmap(img);
+            switch (Name)
             {
                 case "Reta":
-                    switch (this.algorithm)
+                    switch (Algorithm)
                     {
                         case "Real":
-                            btm = DrawLine.RealLine(btm, source.X, source.Y, destiny.X, destiny.Y, cor);
+                            bitmap = DrawLine.RealLine(bitmap, Source.X, Source.Y, Destination.X, Destination.Y, color);
                             break;
 
                         case "DDA":
-                            btm = DrawLine.DDA(btm, source.X, source.Y, destiny.X, destiny.Y, cor);
+                            bitmap = DrawLine.DDA(bitmap, Source.X, Source.Y, Destination.X, Destination.Y, color);
                             break;
 
                         case "Bresenham":
-                            btm = DrawLine.Bresenham(btm, source.X, source.Y, destiny.X, destiny.Y, cor);
+                            bitmap = DrawLine.Bresenham(bitmap, Source.X, Source.Y, Destination.X, Destination.Y, color);
                             break;
                     }
                     break;
 
                 case "Circunferência":
-                    switch (this.algorithm)
+                    switch (Algorithm)
                     {
                         case "Real":
-                            btm = DrawCircle.RealCircle(btm, source.X, source.Y, destiny.X, destiny.Y, cor);
+                            bitmap = DrawCircle.RealCircle(bitmap, Source.X, Source.Y, Destination.X, Destination.Y, color);
                             break;
 
                         case "Trigonometria":
-                            btm = DrawCircle.Trigonometry(btm, source.X, source.Y, destiny.X, destiny.Y, cor);
+                            bitmap = DrawCircle.Trigonometry(bitmap, Source.X, Source.Y, Destination.X, Destination.Y, color);
                             break;
 
                         case "Ponto Médio":
-                            btm = DrawCircle.Midpoint(btm, source.X, source.Y, destiny.X, destiny.Y, cor);
+                            bitmap = DrawCircle.Midpoint(bitmap, Source.X, Source.Y, Destination.X, Destination.Y, color);
                             break;
                     }
                     break;
 
                 case "Elipse":
-                    btm = DrawEllipse.Midpoint(btm, source.X, source.Y, destiny.X, destiny.Y, cor);
+                    bitmap = DrawEllipse.Midpoint(bitmap, Source.X, Source.Y, Destination.X, Destination.Y, color);
                     break;
             }
-            return btm;
+            return bitmap;
         }
 
         public override string ToString()
         {
-            return this.description;
+            return Description;
         }
     }
 }
