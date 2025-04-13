@@ -46,11 +46,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="2D\Graph.cs" />
-    <Compile Include="2D\Polygon.cs" />
-    <Compile Include="Draws\DrawCircle.cs" />
-    <Compile Include="Draws\DrawEllipse.cs" />
-    <Compile Include="Draws\DrawLine.cs" />
+    <Compile Include="2D\Grafo.cs" />
+    <Compile Include="2D\Poligono.cs" />
+    <Compile Include="Desenhos\DesenharCirculo.cs" />
+    <Compile Include="Desenhos\DesenharElipse.cs" />
+    <Compile Include="Desenhos\DesenharLinha.cs" />
     <Compile Include="frmPrincipal.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -59,10 +59,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tools\Aresta.cs" />
-    <Compile Include="Tools\Matrix.cs" />
-    <Compile Include="Tools\Paint.cs" />
-    <Compile Include="Tools\ScanLine.cs" />
+    <Compile Include="Ferramentas\Aresta.cs" />
+    <Compile Include="Ferramentas\Matriz.cs" />
+    <Compile Include="Ferramentas\Pintar.cs" />
+    <Compile Include="Ferramentas\ScanLine.cs" />
     <EmbeddedResource Include="frmPrincipal.resx">
       <DependentUpon>frmPrincipal.cs</DependentUpon>
     </EmbeddedResource>

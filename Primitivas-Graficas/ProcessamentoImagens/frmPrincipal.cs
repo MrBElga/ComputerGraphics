@@ -1,7 +1,7 @@
 ﻿using ProcessamentoImagens;
 using ProcessamentoImagens._2D;
-using ProcessamentoImagens.Draws;
-using ProcessamentoImagens.Tools;
+using ProcessamentoImagens.Desenhos;
+using ProcessamentoImagens.Ferramentas;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -12,16 +12,16 @@ namespace RawLine
 {
     public partial class frmPrincipal : Form
     {
-        private string Active;
-        private Point point;
-        private Image img;
+        private string Ativo;
+        private Point ponto;
+        private Image imagem;
         private bool flag;
-        private List<Graph> List;
-        private List<Polygon> polys;
-        private List<Polygon> VPs;
-        private bool polyflag;
-        private bool polyfirst;
-        private Polygon poly;
+        private List<Grafo> lista;
+        private List<Poligono> poligonos;
+        private List<Poligono> VPs;
+        private bool flagPoligono;
+        private bool primeiroPoligono;
+        private Poligono poligono;
         private Point centro;
         private Point centroVP;
         private Bitmap VP;
@@ -32,28 +32,28 @@ namespace RawLine
             Bitmap b = new Bitmap(picBox.Width, picBox.Height);
             Graphics g = Graphics.FromImage(b);
             g.Clear(Color.White);
-            img = b;
-            picBox.Image = img;
+            imagem = b;
+            picBox.Image = imagem;
             picBox.SizeMode = PictureBoxSizeMode.Normal;
             VP = new Bitmap(ViewPort.Width, ViewPort.Height);
             Graphics.FromImage(VP).Clear(Color.White);
             ViewPort.Image = VP;
             //
             flag = false;
-            polyflag = false;
-            polyfirst = true;
-            point = new Point(-1, -1);
-            List = new List<Graph>();
-            polys = new List<Polygon>();
-            VPs = new List<Polygon>();
+            flagPoligono = false;
+            primeiroPoligono = true;
+            ponto = new Point(-1, -1);
+            lista = new List<Grafo>();
+            poligonos = new List<Poligono>();
+            VPs = new List<Poligono>();
             this.KeyPreview = true;
             pnScroll.Location = new Point(pnScroll.Location.X, 155);
         }
 
-        private void RebuilPointsList(Polygon poly)
+        private void ReconstruirPontosLista(Poligono poligono)
         {
             polysPoints.Items.Clear();
-            foreach (Point p in poly.Vertices)
+            foreach (Point p in poligono.Vertices)
                 polysPoints.Items.Add("(" + p.X + ", " + p.Y + ")");
         }
 
@@ -73,49 +73,49 @@ namespace RawLine
                     }
                 }
             }
-            this.Active = rd.Text;
+            this.Ativo = rd.Text;
         }
 
         private void picBox_MouseMove(object sender, MouseEventArgs e)
         {
             if (picBox.Image != null)
                 toolTip.SetToolTip(picBox, "X:" + e.X + " Y:" + e.Y);
-            if (polyflag == true && polyfirst == false)
+            if (flagPoligono == true && primeiroPoligono == false)
             {
-                picBox.Image = DrawLine.DDA((Bitmap)img, point.X, point.Y, e.X, e.Y, Color.Black);
+                picBox.Image = DesenharLinha.DDA((Bitmap)imagem, ponto.X, ponto.Y, e.X, e.Y, Color.Black);
             }
             else
             {
-                if (flag == true && picBox.Image != null && polyflag == false)
+                if (flag == true && picBox.Image != null && flagPoligono == false)
                 {
-                    switch (this.Active)
+                    switch (this.Ativo)
                     {
                         case "Equação Real da Reta":
-                            picBox.Image = DrawLine.RealLine((Bitmap)img, point.X, point.Y, e.X, e.Y, Color.Black);
+                            picBox.Image = DesenharLinha.LinhaReal((Bitmap)imagem, ponto.X, ponto.Y, e.X, e.Y, Color.Black);
                             break;
 
                         case "DDA":
-                            picBox.Image = DrawLine.DDA((Bitmap)img, point.X, point.Y, e.X, e.Y, Color.Black);
+                            picBox.Image = DesenharLinha.DDA((Bitmap)imagem, ponto.X, ponto.Y, e.X, e.Y, Color.Black);
                             break;
 
                         case "Bresenham":
-                            picBox.Image = DrawLine.Bresenham((Bitmap)img, point.X, point.Y, e.X, e.Y, Color.Black);
+                            picBox.Image = DesenharLinha.Bresenham((Bitmap)imagem, ponto.X, ponto.Y, e.X, e.Y, Color.Black);
                             break;
 
                         case "Trigonometria":
-                            picBox.Image = DrawCircle.Trigonometry((Bitmap)img, point.X, point.Y, e.X, e.Y, Color.Black);
+                            picBox.Image = DesenharCirculo.Trigonometria((Bitmap)imagem, ponto.X, ponto.Y, e.X, e.Y, Color.Black);
                             break;
 
                         case "Ponto Médio":
-                            picBox.Image = DrawCircle.Midpoint((Bitmap)img, point.X, point.Y, e.X, e.Y, Color.Black);
+                            picBox.Image = DesenharCirculo.PontoMedio((Bitmap)imagem, ponto.X, ponto.Y, e.X, e.Y, Color.Black);
                             break;
 
                         case "Ponto Médio Elipse":
-                            picBox.Image = DrawEllipse.Midpoint((Bitmap)img, point.X, point.Y, e.X, e.Y, Color.Black);
+                            picBox.Image = DesenharElipse.PontoMedio((Bitmap)imagem, ponto.X, ponto.Y, e.X, e.Y, Color.Black);
                             break;
 
                         default:
-                            picBox.Image = DrawCircle.RealCircle((Bitmap)img, point.X, point.Y, e.X, e.Y, Color.Black);
+                            picBox.Image = DesenharCirculo.CírculoReal((Bitmap)imagem, ponto.X, ponto.Y, e.X, e.Y, Color.Black);
                             break;
                     }
                 }
@@ -126,41 +126,41 @@ namespace RawLine
         {
             if (e.Button == MouseButtons.Right)
             {
-                img = poly.ReDraw((Bitmap)img, Color.Black);
-                picBox.Image = img;
-                polys.Add(poly);
-                polist.Items.Add(poly);
-                Polygon p = poly.GetClone();
-                VP = p.ViewPort(VP, Color.Black, img.Width, img.Height, VP.Width, VP.Height);
+                imagem = poligono.ReDesenhar((Bitmap)imagem, Color.Black);
+                picBox.Image = imagem;
+                poligonos.Add(poligono);
+                polist.Items.Add(poligono);
+                Poligono p = poligono.ObterClone();
+                VP = p.ViewPort(VP, Color.Black, imagem.Width, imagem.Height, VP.Width, VP.Height);
                 ViewPort.Image = VP;
                 VPs.Add(p);
-                polyflag = false;
-                polyfirst = true;
+                flagPoligono = false;
+                primeiroPoligono = true;
             }
             else
             {
-                if (polyflag)
+                if (flagPoligono)
                 {
-                    if (polyfirst)
+                    if (primeiroPoligono)
                     {
-                        polyfirst = !polyfirst;
-                        poly = new Polygon();
-                        poly.AddVertice(e.X, e.Y);
-                        point = new Point(e.X, e.Y);
+                        primeiroPoligono = !primeiroPoligono;
+                        poligono = new Poligono();
+                        poligono.AdicionarVértice(e.X, e.Y);
+                        ponto = new Point(e.X, e.Y);
                     }
                     else
                     {
-                        img = DrawLine.DDA((Bitmap)img, point.X, point.Y, e.X, e.Y, Color.Black);
-                        picBox.Image = img;
-                        poly.AddVertice(e.X, e.Y);
-                        point = new Point(e.X, e.Y);
+                        imagem = DesenharLinha.DDA((Bitmap)imagem, ponto.X, ponto.Y, e.X, e.Y, Color.Black);
+                        picBox.Image = imagem;
+                        poligono.AdicionarVértice(e.X, e.Y);
+                        ponto = new Point(e.X, e.Y);
                     }
                 }
                 else
                 {
-                    if (flag == false && polyflag == false)
+                    if (flag == false && flagPoligono == false)
                     {
-                        point = new Point(e.X, e.Y);
+                        ponto = new Point(e.X, e.Y);
                         flag = true;
                     }
                 }
@@ -169,73 +169,74 @@ namespace RawLine
 
         private void picBox_MouseUp(object sender, MouseEventArgs e)
         {
-            Graph g;
-            if (flag == true && polyflag == false)
+            Grafo grafo;
+            if (flag == true && flagPoligono == false)
             {
-                switch (this.Active)
+                switch (this.Ativo)
                 {
                     case "Equação Real da Reta":
-                        g = new Graph(point.X, point.Y, e.X, e.Y, "Reta", "Real");
-                        img = g.ReDraw((Bitmap)img, Color.Black);
-                        Graphs.Items.Add(g);
-                        List.Add(g);
+                        grafo = new Grafo(ponto.X, ponto.Y, e.X, e.Y, "Reta", "Real");
+                        imagem = grafo.Redesenhar((Bitmap)imagem, Color.Black);
+                        Graphs.Items.Add(grafo);
+                        lista.Add(grafo);
                         break;
 
                     case "DDA":
-                        g = new Graph(point.X, point.Y, e.X, e.Y, "Reta", "DDA");
-                        img = g.ReDraw((Bitmap)img, Color.Black);
-                        Graphs.Items.Add(g);
-                        List.Add(g);
+                        grafo = new Grafo(ponto.X, ponto.Y, e.X, e.Y, "Reta", "DDA");
+                        imagem = grafo.Redesenhar((Bitmap)imagem, Color.Black);
+                        Graphs.Items.Add(grafo);
+                        lista.Add(grafo);
                         break;
 
                     case "Bresenham":
-                        g = new Graph(point.X, point.Y, e.X, e.Y, "Reta", "Bresenham");
-                        img = g.ReDraw((Bitmap)img, Color.Black);
-                        Graphs.Items.Add(g);
-                        List.Add(g);
+                        grafo = new Grafo(ponto.X, ponto.Y, e.X, e.Y, "Reta", "Bresenham");
+                        imagem = grafo.Redesenhar((Bitmap)imagem, Color.Black);
+                        Graphs.Items.Add(grafo);
+                        lista.Add(grafo);
                         break;
 
                     case "Trigonometria":
-                        g = new Graph(point.X, point.Y, e.X, e.Y, "Circunferência", "Trigonometria");
-                        img = g.ReDraw((Bitmap)img, Color.Black);
-                        Graphs.Items.Add(g);
-                        List.Add(g);
+                        grafo = new Grafo(ponto.X, ponto.Y, e.X, e.Y, "Circunferência", "Trigonometria");
+                        imagem = grafo.Redesenhar((Bitmap)imagem, Color.Black);
+                        Graphs.Items.Add(grafo);
+                        lista.Add(grafo);
                         break;
 
                     case "Ponto Médio":
-                        g = new Graph(point.X, point.Y, e.X, e.Y, "Circunferência", "Ponto Médio");
-                        img = g.ReDraw((Bitmap)img, Color.Black);
-                        Graphs.Items.Add(g);
-                        List.Add(g);
+                        grafo = new Grafo(ponto.X, ponto.Y, e.X, e.Y, "Circunferência", "Ponto Médio");
+                        imagem = grafo.Redesenhar((Bitmap)imagem, Color.Black);
+                        Graphs.Items.Add(grafo);
+                        lista.Add(grafo);
                         break;
 
                     case "Ponto Médio Elipse":
-                        g = new Graph(point.X, point.Y, e.X, e.Y, "Elipse", "Ponto Médio");
-                        img = g.ReDraw((Bitmap)img, Color.Black);
-                        Graphs.Items.Add(g);
-                        List.Add(g);
+                        grafo = new Grafo(ponto.X, ponto.Y, e.X, e.Y, "Elipse", "Ponto Médio");
+                        imagem = grafo.Redesenhar((Bitmap)imagem, Color.Black);
+                        Graphs.Items.Add(grafo);
+                        lista.Add(grafo);
                         break;
 
                     default:
-                        g = new Graph(point.X, point.Y, e.X, e.Y, "Circunferência", "Real");
-                        img = g.ReDraw((Bitmap)img, Color.Black);
-                        Graphs.Items.Add(g);
-                        List.Add(g);
+                        grafo = new Grafo(ponto.X, ponto.Y, e.X, e.Y, "Circunferência", "Real");
+                        imagem = grafo.Redesenhar((Bitmap)imagem, Color.Black);
+                        Graphs.Items.Add(grafo);
+                        lista.Add(grafo);
                         break;
                 }
-                picBox.Image = img;
+                picBox.Image = imagem;
                 flag = false;
             }
         }
+
 
         private void Graphs_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (Graphs.SelectedIndex >= 0)
             {
-                foreach (Graph g in List)
-                    img = g.ReDraw((Bitmap)img, Color.Black);
-                img = List[Graphs.SelectedIndex].ReDraw((Bitmap)img, Color.Blue);
-                picBox.Image = img;
+                foreach (Grafo g in lista)
+                    imagem = g.Redesenhar((Bitmap)imagem, Color.Black);
+                imagem = lista[Graphs.SelectedIndex].Redesenhar((Bitmap)imagem, Color.Blue);
+                picBox.Image = imagem;
             }
         }
 
@@ -243,14 +244,14 @@ namespace RawLine
         {
             if (Graphs.SelectedItem != null)
             {
-                img = List[Graphs.SelectedIndex].ReDraw((Bitmap)img, Color.White);
-                picBox.Image = img;
-                List.RemoveAt(Graphs.SelectedIndex);
+                imagem = lista[Graphs.SelectedIndex].Redesenhar((Bitmap)imagem, Color.White);
+                picBox.Image = imagem;
+                lista.RemoveAt(Graphs.SelectedIndex);
                 Graphs.Items.Clear();
-                foreach (Graph g in List)
+                foreach (Grafo g in lista)
                 {
-                    img = g.ReDraw((Bitmap)img, Color.Black);
-                    picBox.Image = img;
+                    imagem = g.Redesenhar((Bitmap)imagem, Color.Black);
+                    picBox.Image = imagem;
                     Graphs.Items.Add(g);
                 }
             }
@@ -258,17 +259,17 @@ namespace RawLine
 
         private void FMain_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Control && e.KeyCode == Keys.Z && List.Count > 0)
+            if (e.Control && e.KeyCode == Keys.Z && lista.Count > 0)
             {
-                img = List[List.Count - 1].ReDraw((Bitmap)img, Color.White);
-                List.RemoveAt(List.Count - 1);
+                imagem = lista[lista.Count - 1].Redesenhar((Bitmap)imagem, Color.White);
+                lista.RemoveAt(lista.Count - 1);
                 Graphs.Items.Clear();
-                foreach (Graph g in List)
+                foreach (Grafo g in lista)
                 {
-                    img = g.ReDraw((Bitmap)img, Color.Black);
+                    imagem = g.Redesenhar((Bitmap)imagem, Color.Black);
                     Graphs.Items.Add(g);
                 }
-                picBox.Image = img;
+                picBox.Image = imagem;
             }
         }
 
@@ -318,24 +319,24 @@ namespace RawLine
 
         private void btCriaPoly_Click(object sender, EventArgs e)
         {
-            polyflag = true;
-            polyfirst = true;
+            flagPoligono = true;
+            primeiroPoligono = true;
         }
 
         private void polist_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (polist.SelectedItems.Count == 1)
             {
-                foreach (var item in polys)
-                    img = item.ReDraw((Bitmap)img, Color.Black);
+                foreach (var item in poligonos)
+                    imagem = item.ReDesenhar((Bitmap)imagem, Color.Black);
                 foreach (var item in VPs)
-                    VP = item.ReDraw(VP, Color.Black);
-                img = polys[polist.SelectedIndex].ReDraw((Bitmap)img, Color.Blue);
-                VP = VPs[polist.SelectedIndex].ReDraw(VP, Color.Blue);
-                centro = polys[polist.SelectedIndex].GetSeed();
-                centroVP = VPs[polist.SelectedIndex].GetSeed();
-                RebuilPointsList(polys[polist.SelectedIndex]);
-                picBox.Image = img;
+                    VP = item.ReDesenhar(VP, Color.Black);
+                imagem = poligonos[polist.SelectedIndex].ReDesenhar((Bitmap)imagem, Color.Blue);
+                VP = VPs[polist.SelectedIndex].ReDesenhar(VP, Color.Blue);
+                centro = poligonos[polist.SelectedIndex].ObterSemente();
+                centroVP = VPs[polist.SelectedIndex].ObterSemente();
+                ReconstruirPontosLista(poligonos[polist.SelectedIndex]);
+                picBox.Image = imagem;
                 ViewPort.Image = VP;
             }
         }
@@ -346,28 +347,28 @@ namespace RawLine
             {
                 try
                 {
-                    img = polys[polist.SelectedIndex].ReDraw((Bitmap)img, Color.White);
-                    VP = VPs[polist.SelectedIndex].ReDraw(VP, Color.White);
-                    polys.RemoveAt(polist.SelectedIndex);
+                    imagem = poligonos[polist.SelectedIndex].ReDesenhar((Bitmap)imagem, Color.White);
+                    VP = VPs[polist.SelectedIndex].ReDesenhar(VP, Color.White);
+                    poligonos.RemoveAt(polist.SelectedIndex);
                     VPs.RemoveAt(polist.SelectedIndex);
                     polist.Items.Clear();
                     polysPoints.Items.Clear();
-                    foreach (var item in polys)
+                    foreach (var item in poligonos)
                     {
-                        img = item.ReDraw((Bitmap)img, Color.Black);
+                        imagem = item.ReDesenhar((Bitmap)imagem, Color.Black);
                         polist.Items.Add(item);
                     }
                     foreach (var item in VPs)
                     {
-                        VP = item.ReDraw(VP, Color.Black);
+                        VP = item.ReDesenhar(VP, Color.Black);
                     }
-                    picBox.Image = img;
+                    picBox.Image = imagem;
                     ViewPort.Image = VP;
                 }
                 catch
                 {
-                    polys.RemoveRange(0, polys.Count - 1);
-                    Graphics.FromImage(img).Clear(Color.White);
+                    poligonos.RemoveRange(0, poligonos.Count - 1);
+                    Graphics.FromImage(imagem).Clear(Color.White);
                     VPs.RemoveRange(0, VPs.Count - 1);
                     Graphics.FromImage(VP).Clear(Color.White);
                     ViewPort.Image = VP;
@@ -379,9 +380,9 @@ namespace RawLine
         {
             if (polist.SelectedItems.Count > 0)
             {
-                img = polys[polist.SelectedIndex].FloodFill((Bitmap)img, Color.Orange);
-                VP = VPs[polist.SelectedIndex].FloodFill(VP, Color.Orange);
-                picBox.Image = img;
+                imagem = poligonos[polist.SelectedIndex].Preenchimento((Bitmap)imagem, Color.Orange);
+                VP = VPs[polist.SelectedIndex].Preenchimento(VP, Color.Orange);
+                picBox.Image = imagem;
                 ViewPort.Image = VP;
             }
         }
@@ -391,15 +392,15 @@ namespace RawLine
             if (polist.SelectedItems.Count > 0)
             {
                 double value = (double)slideEscala.Value / 10;
-                img = polys[polist.SelectedIndex].Translation((Bitmap)img, Color.Blue, new Point(-centro.X, -centro.Y));
-                img = polys[polist.SelectedIndex].Scala((Bitmap)img, Color.Blue, value);
-                img = polys[polist.SelectedIndex].Translation((Bitmap)img, Color.Blue, new Point(centro.X, centro.Y));
+                imagem = poligonos[polist.SelectedIndex].Translação((Bitmap)imagem, Color.Blue, new Point(-centro.X, -centro.Y));
+                imagem = poligonos[polist.SelectedIndex].Escalar((Bitmap)imagem, Color.Blue, value);
+                imagem = poligonos[polist.SelectedIndex].Translação((Bitmap)imagem, Color.Blue, new Point(centro.X, centro.Y));
                 //
-                VP = VPs[polist.SelectedIndex].Translation(VP, Color.Blue, new Point(-centroVP.X, -centroVP.Y));
-                VP = VPs[polist.SelectedIndex].Scala(VP, Color.Blue, value);
-                VP = VPs[polist.SelectedIndex].Translation(VP, Color.Blue, new Point(centroVP.X, centroVP.Y));
-                RebuilPointsList(polys[polist.SelectedIndex]);
-                picBox.Image = img;
+                VP = VPs[polist.SelectedIndex].Translação(VP, Color.Blue, new Point(-centroVP.X, -centroVP.Y));
+                VP = VPs[polist.SelectedIndex].Escalar(VP, Color.Blue, value);
+                VP = VPs[polist.SelectedIndex].Translação(VP, Color.Blue, new Point(centroVP.X, centroVP.Y));
+                ReconstruirPontosLista(poligonos[polist.SelectedIndex]);
+                picBox.Image = imagem;
                 ViewPort.Image = VP;
             }
         }
@@ -409,11 +410,11 @@ namespace RawLine
             if (polist.SelectedItems.Count > 0)
             {
                 int value = slideTransalacao.Value - 100;
-                img = polys[polist.SelectedIndex].Translation((Bitmap)img, Color.Blue, value);
-                centro = polys[polist.SelectedIndex].GetSeed();
-                RebuilPointsList(polys[polist.SelectedIndex]);
-                VP = VPs[polist.SelectedIndex].Translation(VP, Color.Blue, value);
-                picBox.Image = img;
+                imagem = poligonos[polist.SelectedIndex].Translação((Bitmap)imagem, Color.Blue, value);
+                centro = poligonos[polist.SelectedIndex].ObterSemente();
+                ReconstruirPontosLista(poligonos[polist.SelectedIndex]);
+                VP = VPs[polist.SelectedIndex].Translação(VP, Color.Blue, value);
+                picBox.Image = imagem;
                 ViewPort.Image = VP;
             }
         }
@@ -423,71 +424,71 @@ namespace RawLine
             if (polist.SelectedItems.Count > 0)
             {
                 int value = Convert.ToInt32(numAngle.Value);
-                img = polys[polist.SelectedIndex].Translation((Bitmap)img, Color.Blue, new Point(-centro.X, -centro.Y));
-                img = polys[polist.SelectedIndex].Rotation((Bitmap)img, Color.Blue, value);
-                img = polys[polist.SelectedIndex].Translation((Bitmap)img, Color.Blue, new Point(centro.X, centro.Y));
+                imagem = poligonos[polist.SelectedIndex].Translação((Bitmap)imagem, Color.Blue, new Point(-centro.X, -centro.Y));
+                imagem = poligonos[polist.SelectedIndex].Rotação((Bitmap)imagem, Color.Blue, value);
+                imagem = poligonos[polist.SelectedIndex].Translação((Bitmap)imagem, Color.Blue, new Point(centro.X, centro.Y));
                 //
-                VP = VPs[polist.SelectedIndex].Translation(VP, Color.Blue, new Point(-centroVP.X, -centroVP.Y));
-                VP = VPs[polist.SelectedIndex].Rotation(VP, Color.Blue, value);
-                VP = VPs[polist.SelectedIndex].Translation(VP, Color.Blue, new Point(centroVP.X, centroVP.Y));
-                RebuilPointsList(polys[polist.SelectedIndex]);
+                VP = VPs[polist.SelectedIndex].Translação(VP, Color.Blue, new Point(-centroVP.X, -centroVP.Y));
+                VP = VPs[polist.SelectedIndex].Rotação(VP, Color.Blue, value);
+                VP = VPs[polist.SelectedIndex].Translação(VP, Color.Blue, new Point(centroVP.X, centroVP.Y));
+                ReconstruirPontosLista(poligonos[polist.SelectedIndex]);
                 ViewPort.Image = VP;
-                picBox.Image = img;
+                picBox.Image = imagem;
             }
         }
 
-        private void btShearX_Click(object sender, EventArgs e)
+        private void btCisalharmentoX_Click(object sender, EventArgs e)
         {
             if (polist.SelectedItems.Count > 0)
             {
                 int x = Convert.ToInt32(numX.Value);
-                img = polys[polist.SelectedIndex].Translation((Bitmap)img, Color.Blue, new Point(-centro.X, -centro.Y));
-                img = polys[polist.SelectedIndex].Shear((Bitmap)img, Color.Blue, x, 0);
-                img = polys[polist.SelectedIndex].Translation((Bitmap)img, Color.Blue, new Point(centro.X, centro.Y));
-                RebuilPointsList(polys[polist.SelectedIndex]);
+                imagem = poligonos[polist.SelectedIndex].Translação((Bitmap)imagem, Color.Blue, new Point(-centro.X, -centro.Y));
+                imagem = poligonos[polist.SelectedIndex].Cisalharmento((Bitmap)imagem, Color.Blue, x, 0);
+                imagem = poligonos[polist.SelectedIndex].Translação((Bitmap)imagem, Color.Blue, new Point(centro.X, centro.Y));
+                ReconstruirPontosLista(poligonos[polist.SelectedIndex]);
                 //
-                VP = VPs[polist.SelectedIndex].Translation(VP, Color.Blue, new Point(-centroVP.X, -centroVP.Y));
-                VP = VPs[polist.SelectedIndex].Shear(VP, Color.Blue, x, 0);
-                VP = VPs[polist.SelectedIndex].Translation(VP, Color.Blue, new Point(centroVP.X, centroVP.Y));
+                VP = VPs[polist.SelectedIndex].Translação(VP, Color.Blue, new Point(-centroVP.X, -centroVP.Y));
+                VP = VPs[polist.SelectedIndex].Cisalharmento(VP, Color.Blue, x, 0);
+                VP = VPs[polist.SelectedIndex].Translação(VP, Color.Blue, new Point(centroVP.X, centroVP.Y));
                 ViewPort.Image = VP;
-                picBox.Image = img;
+                picBox.Image = imagem;
             }
         }
 
-        private void btShearY_Click(object sender, EventArgs e)
+        private void btCisalharmentoY_Click(object sender, EventArgs e)
         {
             if (polist.SelectedItems.Count > 0)
             {
                 int y = Convert.ToInt32(numY.Value);
-                img = polys[polist.SelectedIndex].Translation((Bitmap)img, Color.Blue, new Point(-centro.X, -centro.Y));
-                img = polys[polist.SelectedIndex].Shear((Bitmap)img, Color.Blue, 0, y);
-                img = polys[polist.SelectedIndex].Translation((Bitmap)img, Color.Blue, new Point(centro.X, centro.Y));
-                RebuilPointsList(polys[polist.SelectedIndex]);
+                imagem = poligonos[polist.SelectedIndex].Translação((Bitmap)imagem, Color.Blue, new Point(-centro.X, -centro.Y));
+                imagem = poligonos[polist.SelectedIndex].Cisalharmento((Bitmap)imagem, Color.Blue, 0, y);
+                imagem = poligonos[polist.SelectedIndex].Translação((Bitmap)imagem, Color.Blue, new Point(centro.X, centro.Y));
+                ReconstruirPontosLista(poligonos[polist.SelectedIndex]);
                 //
-                VP = VPs[polist.SelectedIndex].Translation(VP, Color.Blue, new Point(-centroVP.X, -centroVP.Y));
-                VP = VPs[polist.SelectedIndex].Shear(VP, Color.Blue, 0, y);
-                VP = VPs[polist.SelectedIndex].Translation(VP, Color.Blue, new Point(centroVP.X, centroVP.Y));
+                VP = VPs[polist.SelectedIndex].Translação(VP, Color.Blue, new Point(-centroVP.X, -centroVP.Y));
+                VP = VPs[polist.SelectedIndex].Cisalharmento(VP, Color.Blue, 0, y);
+                VP = VPs[polist.SelectedIndex].Translação(VP, Color.Blue, new Point(centroVP.X, centroVP.Y));
                 ViewPort.Image = VP;
-                picBox.Image = img;
+                picBox.Image = imagem;
             }
         }
 
-        private void btShearXY_Click(object sender, EventArgs e)
+        private void btCisalharmentoXY_Click(object sender, EventArgs e)
         {
             if (polist.SelectedItems.Count > 0)
             {
                 int x = Convert.ToInt32(numX.Value);
                 int y = Convert.ToInt32(numY.Value);
-                img = polys[polist.SelectedIndex].Translation((Bitmap)img, Color.Blue, new Point(-centro.X, -centro.Y));
-                img = polys[polist.SelectedIndex].Shear((Bitmap)img, Color.Blue, x, y);
-                img = polys[polist.SelectedIndex].Translation((Bitmap)img, Color.Blue, new Point(centro.X, centro.Y));
-                RebuilPointsList(polys[polist.SelectedIndex]);
+                imagem = poligonos[polist.SelectedIndex].Translação((Bitmap)imagem, Color.Blue, new Point(-centro.X, -centro.Y));
+                imagem = poligonos[polist.SelectedIndex].Cisalharmento((Bitmap)imagem, Color.Blue, x, y);
+                imagem = poligonos[polist.SelectedIndex].Translação((Bitmap)imagem, Color.Blue, new Point(centro.X, centro.Y));
+                ReconstruirPontosLista(poligonos[polist.SelectedIndex]);
                 //
-                VP = VPs[polist.SelectedIndex].Translation(VP, Color.Blue, new Point(-centroVP.X, -centroVP.Y));
-                VP = VPs[polist.SelectedIndex].Shear(VP, Color.Blue, x, y);
-                VP = VPs[polist.SelectedIndex].Translation(VP, Color.Blue, new Point(centroVP.X, centroVP.Y));
+                VP = VPs[polist.SelectedIndex].Translação(VP, Color.Blue, new Point(-centroVP.X, -centroVP.Y));
+                VP = VPs[polist.SelectedIndex].Cisalharmento(VP, Color.Blue, x, y);
+                VP = VPs[polist.SelectedIndex].Translação(VP, Color.Blue, new Point(centroVP.X, centroVP.Y));
                 ViewPort.Image = VP;
-                picBox.Image = img;
+                picBox.Image = imagem;
             }
         }
 
@@ -495,16 +496,16 @@ namespace RawLine
         {
             if (polist.SelectedItems.Count > 0)
             {
-                img = polys[polist.SelectedIndex].Translation((Bitmap)img, Color.Blue, new Point(-centro.X, -centro.Y));
-                img = polys[polist.SelectedIndex].Mirror((Bitmap)img, Color.Blue, -1, 1);
-                img = polys[polist.SelectedIndex].Translation((Bitmap)img, Color.Blue, new Point(centro.X, centro.Y));
-                RebuilPointsList(polys[polist.SelectedIndex]);
+                imagem = poligonos[polist.SelectedIndex].Translação((Bitmap)imagem, Color.Blue, new Point(-centro.X, -centro.Y));
+                imagem = poligonos[polist.SelectedIndex].Espelhar((Bitmap)imagem, Color.Blue, -1, 1);
+                imagem = poligonos[polist.SelectedIndex].Translação((Bitmap)imagem, Color.Blue, new Point(centro.X, centro.Y));
+                ReconstruirPontosLista(poligonos[polist.SelectedIndex]);
                 //
-                VP = VPs[polist.SelectedIndex].Translation(VP, Color.Blue, new Point(-centroVP.X, -centroVP.Y));
-                VP = VPs[polist.SelectedIndex].Mirror(VP, Color.Blue, -1, 1);
-                VP = VPs[polist.SelectedIndex].Translation(VP, Color.Blue, new Point(centroVP.X, centroVP.Y));
+                VP = VPs[polist.SelectedIndex].Translação(VP, Color.Blue, new Point(-centroVP.X, -centroVP.Y));
+                VP = VPs[polist.SelectedIndex].Espelhar(VP, Color.Blue, -1, 1);
+                VP = VPs[polist.SelectedIndex].Translação(VP, Color.Blue, new Point(centroVP.X, centroVP.Y));
                 ViewPort.Image = VP;
-                picBox.Image = img;
+                picBox.Image = imagem;
             }
         }
 
@@ -512,16 +513,16 @@ namespace RawLine
         {
             if (polist.SelectedItems.Count > 0)
             {
-                img = polys[polist.SelectedIndex].Translation((Bitmap)img, Color.Blue, new Point(-centro.X, -centro.Y));
-                img = polys[polist.SelectedIndex].Mirror((Bitmap)img, Color.Blue, 1, -1);
-                img = polys[polist.SelectedIndex].Translation((Bitmap)img, Color.Blue, new Point(centro.X, centro.Y));
-                RebuilPointsList(polys[polist.SelectedIndex]);
+                imagem = poligonos[polist.SelectedIndex].Translação((Bitmap)imagem, Color.Blue, new Point(-centro.X, -centro.Y));
+                imagem = poligonos[polist.SelectedIndex].Espelhar((Bitmap)imagem, Color.Blue, 1, -1);
+                imagem = poligonos[polist.SelectedIndex].Translação((Bitmap)imagem, Color.Blue, new Point(centro.X, centro.Y));
+                ReconstruirPontosLista(poligonos[polist.SelectedIndex]);
                 //
-                VP = VPs[polist.SelectedIndex].Translation(VP, Color.Blue, new Point(-centroVP.X, -centroVP.Y));
-                VP = VPs[polist.SelectedIndex].Mirror(VP, Color.Blue, 1, -1);
-                VP = VPs[polist.SelectedIndex].Translation(VP, Color.Blue, new Point(centroVP.X, centroVP.Y));
+                VP = VPs[polist.SelectedIndex].Translação(VP, Color.Blue, new Point(-centroVP.X, -centroVP.Y));
+                VP = VPs[polist.SelectedIndex].Espelhar(VP, Color.Blue, 1, -1);
+                VP = VPs[polist.SelectedIndex].Translação(VP, Color.Blue, new Point(centroVP.X, centroVP.Y));
                 ViewPort.Image = VP;
-                picBox.Image = img;
+                picBox.Image = imagem;
             }
         }
 
@@ -529,16 +530,16 @@ namespace RawLine
         {
             if (polist.SelectedItems.Count > 0)
             {
-                img = polys[polist.SelectedIndex].Translation((Bitmap)img, Color.Blue, new Point(-centro.X, -centro.Y));
-                img = polys[polist.SelectedIndex].Mirror((Bitmap)img, Color.Blue, -1, -1);
-                img = polys[polist.SelectedIndex].Translation((Bitmap)img, Color.Blue, new Point(centro.X, centro.Y));
-                RebuilPointsList(polys[polist.SelectedIndex]);
+                imagem = poligonos[polist.SelectedIndex].Translação((Bitmap)imagem, Color.Blue, new Point(-centro.X, -centro.Y));
+                imagem = poligonos[polist.SelectedIndex].Espelhar((Bitmap)imagem, Color.Blue, -1, -1);
+                imagem = poligonos[polist.SelectedIndex].Translação((Bitmap)imagem, Color.Blue, new Point(centro.X, centro.Y));
+                ReconstruirPontosLista(poligonos[polist.SelectedIndex]);
                 //
-                VP = VPs[polist.SelectedIndex].Translation(VP, Color.Blue, new Point(-centroVP.X, -centroVP.Y));
-                VP = VPs[polist.SelectedIndex].Mirror(VP, Color.Blue, -1, -1);
-                VP = VPs[polist.SelectedIndex].Translation(VP, Color.Blue, new Point(centroVP.X, centroVP.Y));
+                VP = VPs[polist.SelectedIndex].Translação(VP, Color.Blue, new Point(-centroVP.X, -centroVP.Y));
+                VP = VPs[polist.SelectedIndex].Espelhar(VP, Color.Blue, -1, -1);
+                VP = VPs[polist.SelectedIndex].Translação(VP, Color.Blue, new Point(centroVP.X, centroVP.Y));
                 ViewPort.Image = VP;
-                picBox.Image = img;
+                picBox.Image = imagem;
             }
         }
 
@@ -546,11 +547,11 @@ namespace RawLine
         {
             if (polist.SelectedItems.Count > 0)
             {
-                ScanLine scan = new ScanLine(polys[polist.SelectedIndex]);
-                img = scan.Fill(Color.DarkGreen, (Bitmap)img);
-                picBox.Image = img;
+                ScanLine scan = new ScanLine(poligonos[polist.SelectedIndex]);
+                imagem = scan.Preencher(Color.DarkGreen, (Bitmap)imagem);
+                picBox.Image = imagem;
                 ScanLine scanVP = new ScanLine(VPs[polist.SelectedIndex]);
-                VP = scanVP.Fill(Color.DarkGreen, VP);
+                VP = scanVP.Preencher(Color.DarkGreen, VP);
                 ViewPort.Image = VP;
             }
         }
